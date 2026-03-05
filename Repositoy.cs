@@ -1,10 +1,12 @@
-interface ITaskRepository
+using System.Text.Json;
+
+public interface ITaskRepository
 {
     List<TaskItem> LoadTasks();
     void SaveTasks(List<TaskItem> tasks);
 }
 
-class JsonTaskRepository : ITaskRepository
+public class JsonTaskRepository : ITaskRepository
 {
     private readonly string _filePath;
 

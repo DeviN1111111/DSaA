@@ -1,4 +1,6 @@
-interface ITaskService
+using System.Collections.Generic;
+
+public interface ITaskService
 {
     IEnumerable<TaskItem> GetAllTasks();
     void AddTask(string description);
@@ -6,7 +8,7 @@ interface ITaskService
     void ToggleTaskCompletion(int id);
 }
 
-class TaskService : ITaskService 
+public class TaskService : ITaskService 
 {
     private readonly ITaskRepository _repository;
     private readonly List<TaskItem> _tasks;
