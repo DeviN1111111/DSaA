@@ -1,4 +1,5 @@
-interface IMyCollection<T> {
+public interface IMyCollection<T> 
+{
     void Add(T item);
     void Remove(T item);
     T FindBy<K>(K key, Func<T, K, bool> comparer);
