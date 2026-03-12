@@ -1,11 +1,11 @@
-public class MyArray<T> : IMyCollection<T>
+public class MyArray<T> where T : IComparable<T>
 {
     private T[] _items;
     private int _count;
 
     public MyArray(int capacity = 5)
     {
-        array = T[capacity];
+        _items = new T[capacity];
         _count = 0;
     }
 
@@ -16,7 +16,7 @@ public class MyArray<T> : IMyCollection<T>
 
     public void Add(T item)
     {
-        if(_count => _items.Length)
+        if(_count >= _items.Length)
         {
             return;
         }
@@ -29,5 +29,21 @@ public class MyArray<T> : IMyCollection<T>
     public void Remove(int index)
     {
         
+    }
+
+    public void Sort() // bubble sort
+    {
+        for(int i = 0; i < _count - 1; i++)
+        {
+            for(int j = 0; j < _count - 1 - i; j++)
+            {
+                if(_items[j].CompareTo(_items[j+1]) > 0)
+                {
+                    T temp = _items[j + 1];
+                    _items[j + 1] = _items[j];
+                    _items[j] = temp;
+                }
+            }
+        }
     }
 }
