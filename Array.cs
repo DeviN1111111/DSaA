@@ -1,4 +1,4 @@
-public class MyArray<T> : IMyCollection<T>
+public class MyArray<T> where T : IComparable<T>
 {
     private T[] _items;
     private int _count;
@@ -30,6 +30,7 @@ public class MyArray<T> : IMyCollection<T>
     {
         
     }
+<<<<<<< HEAD
     public R Reduce<R>(Func<T, R, R> fx)
     {
         var acc = default(R);
@@ -53,5 +54,22 @@ public class MyArray<T> : IMyCollection<T>
             result[j++] = _items[i]; // Populate new array with the value of the old array
         }
         return result;
+=======
+
+    public void Sort() // bubble sort
+    {
+        for(int i = 0; i < _count - 1; i++)
+        {
+            for(int j = 0; j < _count - 1 - i; j++)
+            {
+                if(_items[j].CompareTo(_items[j+1]) > 0)
+                {
+                    T temp = _items[j + 1];
+                    _items[j + 1] = _items[j];
+                    _items[j] = temp;
+                }
+            }
+        }
+>>>>>>> 0aaf3cac7799ce98cf94d33956430ec09ae20d30
     }
 }
