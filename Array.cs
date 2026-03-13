@@ -1,4 +1,6 @@
-public class MyArray<T> where T :  TaskItem, IComparable<T>
+using System.Collections;
+using System.Collections.Generic;
+public class MyArray<T> : IEnumerable<T> where T : TaskItem, IComparable<T>
 {
     private T[] _items;
     private int _count;
@@ -123,5 +125,16 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
             }
         }
         return default;
+    }
+    public IEnumerator<T> GetEnumerator()
+    {
+        for (int i = 0; i < _count; i++)
+        {
+            yield return _items[i];
+        }
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }
