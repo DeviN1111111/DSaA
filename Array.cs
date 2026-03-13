@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-public class MyArray<T> : IEnumerable<T> where T : TaskItem, IComparable<T>
+public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, IComparable<T>
 {
     private T[] _items;
     private int _count;
-    public int Count { get; }
+    public int Count { get { return _count; } }
     public bool Dirty { get; set; } = false;
 
     public MyArray(int capacity = 5)
@@ -15,7 +15,7 @@ public class MyArray<T> : IEnumerable<T> where T : TaskItem, IComparable<T>
 
     public int CountInArray()
     {
-        return _count;
+        return Count;
     }
 
     public void Add(T item)
@@ -27,6 +27,7 @@ public class MyArray<T> : IEnumerable<T> where T : TaskItem, IComparable<T>
 
         _items[_count] = item;
         _count++;
+
         return;
     }
 
@@ -39,19 +40,18 @@ public class MyArray<T> : IEnumerable<T> where T : TaskItem, IComparable<T>
         
         return acc;
     }
-    public T[] Filter(Func<T, bool> predicate)
-    { 
-        var size = 0;
-        for(int i = 0; i < _items.Length; ++i)
-            size += predicate(_items[i]) ? 1 : 0; // Checks a condition and add the true results to the size of new array
-            // Example: If array size = 5 and 3 are true; new size = 3;
+    public IMyCollection<T> Filter(Func<T, bool> predicate)
+    {
+        var result = new MyArray<T>(_count);
 
-        var result = new T[size]; // Creates new array with the new size
-        for(int i = 0, j = 0; i < _items.Length && j < size; ++i) 
+        for (int i = 0; i < _count; i++)
         {
-            if(predicate(_items[i])) // Does same check as before
-            result[j++] = _items[i]; // Populate new array with the value of the old array
+            if (predicate(_items[i]))
+            {
+                result.Add(_items[i]);
+            }
         }
+
         return result;
     }
 
