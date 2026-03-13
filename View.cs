@@ -56,14 +56,18 @@ public class ConsoleTaskView : ITaskView
             string option = Prompt("Select an option: ");
             switch (option) {
                 case "1":
+                    if(myArray.CountInArray() >= 5)
+                    {
+                        System.Console.WriteLine($"Array is full, max: {myArray.Count}");
+                        Console.ReadLine();
+                        break;
+                    }
                     string description = Prompt("Enter task description: ");
 
                     TaskItem newTask = new TaskItem { Id = myArray.CountInArray() + 1, Description = description, Completed = false };
                     myArray.Add(newTask);
-
                     _service.AddTask(description);
                     break;
-
                 case "2":
                     string removeIdStr = Prompt("Enter task id to remove: ");
                     if (int.TryParse(removeIdStr, out int removeId)) 
@@ -74,12 +78,14 @@ public class ConsoleTaskView : ITaskView
                     TaskItem ItemToRemove = myArray.FindBy<int>(removeId, (item, Id) => item.Id == Id);
                     
                     if(ItemToRemove != default)
+                    {
                         myArray.Remove(ItemToRemove);
+                        System.Console.WriteLine($"ID: {removeId} has been deleted");
+                    }
                     else
                         System.Console.WriteLine("No task with given ID");;
                         Console.ReadLine();
                     break;
-
                 case "3":
                     string toggleIdStr = Prompt("Enter task id to toggle: ");
                     if (int.TryParse(toggleIdStr, out int toggleId)) 
@@ -87,10 +93,8 @@ public class ConsoleTaskView : ITaskView
                         _service.ToggleTaskCompletion(toggleId);
                     }
                     break;
-
                 case "4":
                     return;
-
                 default:
                     Console.WriteLine("Invalid option. Press any key to continue...");
                     Console.ReadKey();
