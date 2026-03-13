@@ -33,10 +33,18 @@ public class ConsoleTaskView : ITaskView
     public void Run() 
     {
         MyArray<TaskItem> myArray = new MyArray<TaskItem>();
-        while (true) {
+        while (true) 
+        {
+            Console.Clear();
             // DisplayTasks(_service.GetAllTasks());
-            Console.WriteLine($"{myArray.Count()}");
-            myArray.PrintAll();
+            // System.Console.WriteLine("-------------------------------------------");
+            // if (myArray.Count() == 0)
+            // {
+            //     System.Console.WriteLine("NO TASK");
+            // }
+            // else
+            //     myArray.PrintAll();
+            // System.Console.WriteLine("-------------------------------------------");
 
             Console.WriteLine("\n==== ToDo List ====");
             Console.WriteLine("\nOptions:");
@@ -50,7 +58,7 @@ public class ConsoleTaskView : ITaskView
                 case "1":
                     string description = Prompt("Enter task description: ");
 
-                    TaskItem newTask = new TaskItem { Id = 1, Description = description, Completed = false };
+                    TaskItem newTask = new TaskItem { Id = myArray.CountInArray() + 1, Description = description, Completed = false };
                     myArray.Add(newTask);
 
                     _service.AddTask(description);
@@ -63,8 +71,13 @@ public class ConsoleTaskView : ITaskView
                         _service.RemoveTask(removeId);
                     }
 
-                    TaskItem ItemToRemove = MyArray.FindBy<int>(removeId, (TaskItem, Id) => TaskItem.Id == Id);
-                    MyArray.Remove(ItemToRemove);
+                    TaskItem ItemToRemove = myArray.FindBy<int>(removeId, (item, Id) => item.Id == Id);
+                    
+                    if(ItemToRemove != default)
+                        myArray.Remove(ItemToRemove);
+                    else
+                        System.Console.WriteLine("No task with given ID");;
+                        Console.ReadLine();
                     break;
 
                 case "3":
