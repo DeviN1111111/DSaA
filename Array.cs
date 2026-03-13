@@ -2,6 +2,8 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
 {
     private T[] _items;
     private int _count;
+    public int Count { get; }
+    public bool Dirty { get; set; } = false;
 
     public MyArray(int capacity = 5)
     {
@@ -9,7 +11,7 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
         _count = 0;
     }
 
-    public int Count()
+    public int CountInArray()
     {
         return _count;
     }
@@ -81,7 +83,8 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
         {
             if (_items[i] != null && _items[i].Equals(item))
             {
-                Shift(i, false);
+                Shift(i, true);
+                _count--;
                 return;
             }
         }
@@ -115,13 +118,16 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
     // K = int,
     public T FindBy<K>(K key, Func<T, K, bool> comparer)
     {
-        foreach(T taskItems in _items)
+        foreach(T taskItem in _items)
         {
-            if(comparer(taskItems, key))
+            if(taskItem != null)
             {
-                return taskItems;
+                if(comparer(taskItem, key))
+                {
+                    return taskItem;
+                }
             }
         }
-        return default;
+        return default!;
     }
 }
