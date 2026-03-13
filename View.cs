@@ -6,7 +6,8 @@ interface ITaskView
     void Run();
 }
 
-public class ConsoleTaskView : ITaskView {
+public class ConsoleTaskView : ITaskView 
+{
     private readonly ITaskService _service;
 
     public ConsoleTaskView(ITaskService service) {
@@ -25,9 +26,15 @@ public class ConsoleTaskView : ITaskView {
         return Console.ReadLine();
     }
 
-    public void Run() {
+    public void Run() 
+    {
+        MyArray<TaskItem> myArray = new MyArray<TaskItem>();
         while (true) {
-            DisplayTasks(_service.GetAllTasks());
+            // DisplayTasks(_service.GetAllTasks());
+            Console.WriteLine($"{myArray.Count()}");
+            myArray.PrintAll();
+
+            Console.WriteLine("\n==== ToDo List ====");
             Console.WriteLine("\nOptions:");
             Console.WriteLine("1. Add Task");
             Console.WriteLine("2. Remove Task");
@@ -38,6 +45,10 @@ public class ConsoleTaskView : ITaskView {
             switch (option) {
                 case "1":
                     string description = Prompt("Enter task description: ");
+
+                    TaskItem newTask = new TaskItem { Id = 1, Description = description, Completed = false };
+                    myArray.Add(newTask);
+
                     _service.AddTask(description);
                     break;
 
@@ -46,6 +57,8 @@ public class ConsoleTaskView : ITaskView {
                     if (int.TryParse(removeIdStr, out int removeId)) {
                         _service.RemoveTask(removeId);
                     }
+
+                    
                     break;
 
                 case "3":

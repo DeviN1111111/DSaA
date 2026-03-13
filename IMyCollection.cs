@@ -9,6 +9,6 @@ public interface IMyCollection<T>
     bool Dirty {get; set;}
     R Reduce<R>(Func<R, T, R> accumulator);
     R Reduce<R>(R initial, Func<R, T, R> accumulator);
-    IMyIterator<T> GetIterator();
+    // IMyIterator<T> GetIterator();
     IEnumerator<T> GetEnumerator();
 }
