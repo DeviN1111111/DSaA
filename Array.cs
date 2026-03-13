@@ -55,13 +55,13 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
         return result;
     }
 
-    public void Sort() // bubble sort
+    public void Sort(Comparison<T> comparison) // bubble sort
     {
         for(int i = 0; i < _count - 1; i++)
         {
             for(int j = 0; j < _count - 1 - i; j++)
             {
-                if(_items[j].Description.CompareTo(_items[j+1].Description) > 0)
+                if(comparison(_items[j], _items[j + 1]) > 0)
                 {
                     T temp = _items[j + 1];
                     _items[j + 1] = _items[j];
