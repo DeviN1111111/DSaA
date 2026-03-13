@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 
 interface ITaskView
 {
@@ -10,18 +11,21 @@ public class ConsoleTaskView : ITaskView
 {
     private readonly ITaskService _service;
 
-    public ConsoleTaskView(ITaskService service) {
+    public ConsoleTaskView(ITaskService service) 
+    {
         _service = service;
     }
 
-    void DisplayTasks(IEnumerable<TaskItem> tasks) {
+    void DisplayTasks(IEnumerable<TaskItem> tasks) 
+    {
         Console.Clear();
         Console.WriteLine("==== ToDo List ====");
         foreach (var task in tasks)
             Console.WriteLine($"{task}");
     }
 
-    string Prompt(string prompt) {
+    string Prompt(string prompt) 
+    {
         Console.Write(prompt);
         return Console.ReadLine();
     }
@@ -54,16 +58,19 @@ public class ConsoleTaskView : ITaskView
 
                 case "2":
                     string removeIdStr = Prompt("Enter task id to remove: ");
-                    if (int.TryParse(removeIdStr, out int removeId)) {
+                    if (int.TryParse(removeIdStr, out int removeId)) 
+                    {
                         _service.RemoveTask(removeId);
                     }
 
-                    
+                    TaskItem ItemToRemove = MyArray.FindBy<int>(removeId, (TaskItem, Id) => TaskItem.Id == Id);
+                    MyArray.Remove(ItemToRemove);
                     break;
 
                 case "3":
                     string toggleIdStr = Prompt("Enter task id to toggle: ");
-                    if (int.TryParse(toggleIdStr, out int toggleId)) {
+                    if (int.TryParse(toggleIdStr, out int toggleId)) 
+                    {
                         _service.ToggleTaskCompletion(toggleId);
                     }
                     break;

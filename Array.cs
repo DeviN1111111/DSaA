@@ -26,11 +26,6 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
         return;
     }
 
-    public void Remove(T item)
-    {
-        
-    }
-<<<<<<< HEAD
     public R Reduce<R>(Func<T, R, R> fx)
     {
         var acc = default(R);
@@ -54,7 +49,7 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
             result[j++] = _items[i]; // Populate new array with the value of the old array
         }
         return result;
-=======
+    }
 
     public void Sort() // bubble sort
     {
@@ -70,7 +65,6 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
                 }
             }
         }
->>>>>>> 0aaf3cac7799ce98cf94d33956430ec09ae20d30
     }
 
     public void PrintAll()
@@ -81,11 +75,11 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
         }
     }
 
-    public bool Delete(T item)
+    public void Remove(T item)
     {
-        for(int i = 0; i < data.Length; i++)
+        for(int i = 0; i < _items.Length; i++)
         {
-            if (data[i] != null && data[i].Equals(item))
+            if (_items[i] != null && _items[i].Equals(item))
             {
                 Shift(i, false);
                 return;
@@ -99,21 +93,35 @@ public class MyArray<T> where T :  TaskItem, IComparable<T>
     {
         if(right == false) //left!
         {
-            for(; i < data.Length - 1; i++)
+            for(; i < _items.Length - 1; i++)
             {
-                data[i] = data[i + 1];
-                data[i + 1] = default;
+                _items[i] = _items[i + 1];
+                _items[i + 1] = default;
             }
         }
         else
         {
-            for (int j = data.Length - 1; j > i; j--)
+            for (int j = _items.Length - 1; j > i; j--)
             {
-                data[j] = data[j - 1];
+                _items[j] = _items[j - 1];
             }
 
-            data[i] = default;
+            _items[i] = default;
         }
         return;
+    }
+
+
+    // K = int,
+    public T FindBy<K>(K key, Func<T, K, bool> comparer)
+    {
+        foreach(T taskItems in _items)
+        {
+            if(comparer(taskItems, key))
+            {
+                return taskItems;
+            }
+        }
+        return default;
     }
 }
