@@ -11,7 +11,7 @@ public interface ITaskService
 public class TaskService : ITaskService 
 {
     private readonly ITaskRepository _repository;
-    private readonly List<TaskItem> _tasks;
+    private readonly MyArray<TaskItem> _tasks;
 
     public TaskService(ITaskRepository repository) 
     {
