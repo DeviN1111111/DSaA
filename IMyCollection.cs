@@ -8,6 +8,6 @@ public interface IMyCollection<T>
     int Count { get; } // CHECK
     bool Dirty {get; set;} 
     R Reduce<R>(Func<T, R, R> accumulator); // CHECK
-    IMyIterator<T> GetIterator(); // CHECK
+    IMyIterator<T> GetIterator();
     IEnumerator<T> GetEnumerator();
 }

@@ -143,4 +143,8 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
     {
         return GetEnumerator();
     }
+    public IMyIterator<T> GetIterator()
+    {
+        return new MyIterator<T>(_items, _count);
+    }
 }
