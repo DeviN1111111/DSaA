@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+
 public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, IComparable<T>
 {
     private T[] _items;
@@ -115,7 +115,6 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
         }
         return;
     }
-
 
     // K = int,
     public T FindBy<K>(K key, Func<T, K, bool> comparer)
