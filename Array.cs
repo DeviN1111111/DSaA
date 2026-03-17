@@ -25,7 +25,6 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
     public T[] ToArray()
     {
         T[] result = CloneData(_items);
-        Array.Copy(_items, result, _count);
         return result;
     }
 
@@ -112,25 +111,20 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
 
     public void Shift(int i, bool right = true)
     {
-        if(right == false) //left!
+        if (right)
         {
-            for(; i < _items.Length - 1; i++)
-            {
-                _items[i] = _items[i + 1];
-                _items[i + 1] = default;
-            }
+            for (int j = _count; j >= i; j--)
+                _items[j + 1] = _items[j];
         }
         else
         {
-            for (int j = _items.Length - 1; j > i; j--)
             {
-                _items[j] = _items[j - 1];
+                for (int j = i; j < _count; j++)
+                    _items[j] = _items[j + 1];
             }
-
-            _items[i] = default;
         }
-        return;
     }
+    
     public T[] CloneData(T[] items)
     {
         var copy = new T[items.Length];
