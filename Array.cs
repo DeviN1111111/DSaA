@@ -13,6 +13,23 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
         _count = 0;
     }
 
+    //Extra constructor
+    public MyArray(T[] items)
+    {
+        T[] newArray = new T[items.Length];
+        Array.Copy(items, newArray, items.Length);
+        _items = newArray;
+        _count = items.Length;
+    }
+
+    //public toArray maken 
+    public T[] ToArray()
+    {
+        T[] result = new T[_count];
+        Array.Copy(_items, result, _count);
+        return result;
+    }
+
     public int CountInArray()
     {
         return Count;

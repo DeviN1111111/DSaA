@@ -23,7 +23,8 @@ public class TaskService : ITaskService
 
     public void AddTask(string description) 
     {
-        int newId = _tasks.Count > 0 ? _tasks[_tasks.Count - 1].Id + 1 : 1;
+        // int newId = _tasks.Count > 0 ? _tasks[_tasks.Count - 1].Id + 1 : 1;
+        int newId = 1;
 
         var newTask = new TaskItem { Id = newId, Description = description, Completed = false };
 
@@ -33,7 +34,7 @@ public class TaskService : ITaskService
 
     public void RemoveTask(int id) 
     {
-        var task = _tasks.Find(t => t.Id == id);
+        var task = _tasks.FindBy(id, (t, key) => t.Id == key);
         if (task != null) {
             _tasks.Remove(task);
             _repository.SaveTasks(_tasks);
@@ -42,7 +43,7 @@ public class TaskService : ITaskService
 
     public void ToggleTaskCompletion(int id) 
     {
-        var task = _tasks.Find(t => t.Id == id);
+        var task = _tasks.FindBy(id, (t, key) => t.Id == key);
         if (task != null) {
             task.Completed = !task.Completed;
             _repository.SaveTasks(_tasks);
