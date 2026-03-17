@@ -36,15 +36,14 @@ public class ConsoleTaskView : ITaskView
         while (true) 
         {
             Console.Clear();
-            // DisplayTasks(_service.GetAllTasks());
-            // System.Console.WriteLine("-------------------------------------------");
-            // if (myArray.Count() == 0)
-            // {
-            //     System.Console.WriteLine("NO TASK");
-            // }
-            // else
-            //     myArray.PrintAll();
-            // System.Console.WriteLine("-------------------------------------------");
+            System.Console.WriteLine("-------------------------------------------");
+            if (myArray.Count() == 0)
+            {
+                System.Console.WriteLine("NO TASK");
+            }
+            else
+                DisplayTasks(_service.GetAllTasks());
+            System.Console.WriteLine("-------------------------------------------");
 
             Console.WriteLine("\n==== ToDo List ====");
             Console.WriteLine("\nOptions:");
@@ -59,12 +58,21 @@ public class ConsoleTaskView : ITaskView
                     if(myArray.CountInArray() >= 5)
                     {
                         System.Console.WriteLine($"Array is full, max: {myArray.Count}");
-                        Console.ReadLine();
+                        Console.ReadKey();
                         break;
                     }
                     string description = Prompt("Enter task description: ");
 
-                    TaskItem newTask = new TaskItem { Id = myArray.CountInArray() + 1, Description = description, Completed = false };
+                    var arr = _service.GetAllTasks().ToArray();
+                    int newId = 1;
+
+                    for (int i = 0; i < arr.Length; i++)
+                    {
+                        if (arr[i] != null && arr[i].Id >= newId)
+                            newId = arr[i].Id + 1;
+                    }
+
+                    TaskItem newTask = new TaskItem { Id = newId, Description = description, Completed = false };
                     myArray.Add(newTask);
                     _service.AddTask(description);
                     break;
@@ -84,7 +92,7 @@ public class ConsoleTaskView : ITaskView
                     }
                     else
                         System.Console.WriteLine("No task with given ID");;
-                        Console.ReadLine();
+                        Console.ReadKey();
                     break;
                 case "3":
                     string toggleIdStr = Prompt("Enter task id to toggle: ");

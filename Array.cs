@@ -37,13 +37,15 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
     {
         if(_count >= _items.Length)
         {
-            return;
+            T[] newArray = new T[_items.Length + 1];
+            for (int i = 0; i < _items.Length; i++)
+            {
+                newArray[i] = _items[i];
+            }
+            _items = newArray;
         }
-
         _items[_count] = item;
         _count++;
-
-        return;
     }
 
     public R Reduce<R>(Func<T, R, R> fx)
@@ -86,21 +88,13 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
         }
     }
 
-    public void PrintAll()
-    {
-        for(int i = 0; i < _count; i++)
-        {
-            Console.WriteLine(_items[i].ToString());
-        }
-    }
-
-    public void Remove(T item)
+    public void Remove(T key)
     {
         for(int i = 0; i < _items.Length; i++)
         {
-            if (_items[i] != null && _items[i].Equals(item))
+            if (_items[i] != null && _items[i].Equals(key))
             {
-                Shift(i, true);
+                Shift(i, false);
                 _count--;
                 return;
             }
@@ -111,18 +105,24 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
 
     public void Shift(int i, bool right = true)
     {
-        if (right)
+        if(right == false) //left!
         {
-            for (int j = _count; j >= i; j--)
-                _items[j + 1] = _items[j];
+            for(; i < _count - 1; i++)
+            {
+                _items[i] = _items[i + 1];
+                _items[i + 1] = default;
+            }
         }
         else
         {
+            for (int j = _items.Length - 1; j > i; j--)
             {
-                for (int j = i; j < _count; j++)
-                    _items[j] = _items[j + 1];
+                _items[j] = _items[j - 1];
             }
+
+            _items[i] = default;
         }
+        return;
     }
     
     public T[] CloneData(T[] items)

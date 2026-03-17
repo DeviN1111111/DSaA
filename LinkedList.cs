@@ -9,6 +9,17 @@ public class MyLinkedList<T>
         _count = 0;
     }
 
+    public MyLinkedList(T[] items)
+    {
+        _head = null;
+        _count = 0;
+        if (items != null)
+        {
+            foreach (var item in items)
+                Add(item);
+        }
+    }
+
     public void Add(T node)
     {
         var newNode = new Node<T>(node);
@@ -65,17 +76,6 @@ public class MyLinkedList<T>
     public int CountInLinkedList()
     {
         return _count;
-    }
-
-    public MyLinkedList(T[] items)
-    {
-        _head = null;
-        _count = 0;
-        if (items != null)
-        {
-            foreach (var item in items)
-                Add(item);
-        }
     }
 
     public T[] ToArray()
