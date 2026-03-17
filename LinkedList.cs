@@ -80,7 +80,7 @@ public class MyLinkedList<T>
 
     public T[] ToArray()
     {
-        MyArray<T>[] result = new MyArray<T>[_count];
+        T[] result = new T[_count];
         int i = 0;
         Node<T>? current = _head;
         while (current != null)

@@ -16,8 +16,7 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
     //Extra constructor
     public MyArray(T[] items)
     {
-        T[] newArray = new T[items.Length];
-        Array.Copy(items, newArray, items.Length);
+        var newArray = CloneData(items);
         _items = newArray;
         _count = items.Length;
     }
@@ -25,7 +24,7 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
     //public toArray maken 
     public T[] ToArray()
     {
-        T[] result = new T[_count];
+        T[] result = CloneData(_items);
         Array.Copy(_items, result, _count);
         return result;
     }
@@ -131,6 +130,17 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, I
             _items[i] = default;
         }
         return;
+    }
+    public T[] CloneData(T[] items)
+    {
+        var copy = new T[items.Length];
+
+        for (int i = 0; i < Count; i++)
+        {
+            copy[i] = items[i];
+        }
+
+        return copy;
     }
 
     // K = int,
