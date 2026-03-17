@@ -80,7 +80,7 @@ public class MyLinkedList<T>
 
     public T[] ToArray()
     {
-        T[] result = new T[_count];
+        MyArray<T>[] result = new MyArray<T>[_count];
         int i = 0;
         Node<T>? current = _head;
         while (current != null)
@@ -91,7 +91,7 @@ public class MyLinkedList<T>
         return result;
     }
 
-    public T FindBy<K>(K key, System.Func<T, K, bool> comparer)
+    public T FindBy<K>(K key, Func<T, K, bool> comparer)
     {
         Node<T>? current = _head;
         while (current != null)
