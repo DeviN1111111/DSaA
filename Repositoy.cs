@@ -20,8 +20,8 @@ public class JsonTaskRepository : ITaskRepository
         }
 
         string json = File.ReadAllText(_filePath);
-        var tasks = JsonSerializer.Deserialize<MyArray<TaskItem>>(json);
-        return tasks ?? new MyArray<TaskItem>();
+        var tasks = JsonSerializer.Deserialize<TaskItem[]>(json);
+        return tasks is null ? new MyArray<TaskItem>() : new MyArray<TaskItem>(tasks);
     }
 
     public void SaveTasks(MyArray<TaskItem> tasks)
