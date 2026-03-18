@@ -6,6 +6,10 @@ public class TaskItem : IComparable<TaskItem>
     public required string Description { get; set; }
     public bool Completed { get; set; }
 
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public string Priority { get; set; } = "Normal";
+    public string Status { get; set; } = "To-Do";
+
     public int CompareTo(TaskItem other)
     {
         if (other == null) return 1;
