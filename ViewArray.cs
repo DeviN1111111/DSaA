@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Spectre.Console;
 
 interface ITaskView
 {
@@ -33,24 +34,39 @@ public class ConsoleTaskView : ITaskView
     public void Run() 
     {
         MyArray<TaskItem> myArray = new MyArray<TaskItem>();
+        bool filter = false;
+        string filterString = "";
+        string filterType = "";
         while (true) 
         {
             Console.Clear();
-            System.Console.WriteLine("-------------------------------------------");
-            if (myArray.Count() == 0)
+            MyArray<TaskItem> myFilterArray = myArray;
+            if(filter)
             {
-                System.Console.WriteLine("NO TASK");
+                if(filterType == "Sort")
+                {
+                    myFilterArray.Sort((a, b) => a.CreatedAt.CompareTo(b.CreatedAt));
+                }
+                else if(filterType == "Priority")
+                {
+                    myFilterArray = (MyArray<TaskItem>)myFilterArray.Filter((task) => task.Priority == filterString);
+                }
+                else if(filterType == "Status")
+                {
+                    myFilterArray = (MyArray<TaskItem>)myFilterArray.Filter((task) => task.Status == filterString);
+                }
             }
-            else
-                DisplayTasks(_service.GetAllTasks());
-            System.Console.WriteLine("-------------------------------------------");
+            LayoutBuilder<TaskItem>.RenderLayout(myFilterArray.ToArray());
 
             Console.WriteLine("\n==== ToDo List ====");
             Console.WriteLine("\nOptions:");
             Console.WriteLine("1. Add Task");
             Console.WriteLine("2. Remove Task");
             Console.WriteLine("3. Toggle Task State");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Change Task Priority");
+            Console.WriteLine("5. Change Task Status");
+            Console.WriteLine("6. Toggle filter");
+            Console.WriteLine("7. Exit");
 
             string option = Prompt("Select an option: ");
             switch (option) {
@@ -62,6 +78,9 @@ public class ConsoleTaskView : ITaskView
                         break;
                     }
                     string description = Prompt("Enter task description: ");
+                    string priority = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title("Choose your priority")
+                        .AddChoices("Low", "Middle", "High"));
 
                     var arr = _service.GetAllTasks().ToArray();
                     int newId = 1;
@@ -72,7 +91,7 @@ public class ConsoleTaskView : ITaskView
                             newId = arr[i].Id + 1;
                     }
 
-                    TaskItem newTask = new TaskItem { Id = newId, Description = description, Completed = false };
+                    TaskItem newTask = new TaskItem { Id = newId, Description = description, Completed = false, Priority = priority};
                     myArray.Add(newTask);
                     _service.AddTask(description);
                     break;
@@ -102,6 +121,61 @@ public class ConsoleTaskView : ITaskView
                     }
                     break;
                 case "4":
+                    string priorityChange = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title("Choose your priority")
+                        .AddChoices("Low", "Middle", "High"));
+
+                    System.Console.WriteLine("Enter ID to change: ");
+                    int changeIdStr = Convert.ToInt32(Console.ReadLine());
+
+                    TaskItem TaskToChange = myArray.FindBy<int>(changeIdStr, (TaskItem, id) => TaskItem.Id == id);
+                    TaskToChange.Priority = priorityChange;
+                    break;
+                case "5":
+                    string changeTaskStatus = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title("Choose your Status")
+                        .AddChoices("To-Do", "In Progress", "Done"));
+
+                    System.Console.WriteLine("Enter ID to change: ");
+                    int changeidStr = Convert.ToInt32(Console.ReadLine());
+                    TaskItem TaskToStatusChange = myArray.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id); 
+
+                    TaskToStatusChange.Status = changeTaskStatus;
+                    break;
+                case "6":
+                    string ToggleFilter = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title("Choose filter type")
+                        .AddChoices("Priority", "Status", "Creation Date", "Off"));
+
+                    if(ToggleFilter == "Priority")
+                    {
+                        filterType = "Priority";
+                        string ToggleFilter2 = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                            .Title("Choose priority")
+                            .AddChoices("Low", "Middle", "High"));
+                        filterString = ToggleFilter2;
+                        filter = true;
+                    }
+                    else if(ToggleFilter == "Status")
+                    {
+                        filterType = "Status";
+                        string ToggleFilter2 = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                            .Title("Choose status")
+                            .AddChoices("To-Do", "In Progress", "Done"));
+                        filterString = ToggleFilter2;
+                        filter = true;
+                    }
+                    else if(ToggleFilter == "Creation Date")
+                    {
+                        filterType = "Sort";
+                        filter = true;
+                    }
+                    else if(ToggleFilter == "Off")
+                    {
+                        filter = false;
+                    }
+                    break;
+                case "7":
                     return;
                 default:
                     Console.WriteLine("Invalid option. Press any key to continue...");

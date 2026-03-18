@@ -28,15 +28,15 @@ public class LayoutBuilder<T> where T : TaskItem
 
             if (items[i].Status == "To-Do")
             {
-                todoTable.AddRow($"[bold]{items[i].Id}[/] {items[i].Description}");
+                todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
             }
             else if (items[i].Status == "In Progress")
             {
-                inProgressTable.AddRow($"[bold]{items[i].Id}[/] {items[i].Description}");
+                inProgressTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
             }
             else if (items[i].Status == "Done")
             {
-                doneTable.AddRow($"[bold]{items[i].Id}[/] {items[i].Description}");
+                doneTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
             }
         }
 
@@ -48,6 +48,6 @@ public class LayoutBuilder<T> where T : TaskItem
             .Padding(2, 2);
 
         AnsiConsole.Write(borderedLayout);
-        Console.ReadKey();
+        // Console.ReadKey();
     }
 }
