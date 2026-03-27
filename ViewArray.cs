@@ -62,14 +62,15 @@ public class ConsoleTaskView : ITaskView
             Console.WriteLine("\n==== ToDo List ====");
             Console.WriteLine($"Current DataType: {currentDataType}");
             Console.WriteLine("\nOptions:");
-            Console.WriteLine("0. Switch Datatype");
+            System.Console.WriteLine("0. Change Datatype");
             Console.WriteLine("1. Add Task");
             Console.WriteLine("2. Remove Task");
-            Console.WriteLine("3. Toggle Task State");
+            // Console.WriteLine("3. Toggle Task State");
             Console.WriteLine("4. Change Task Priority");
             Console.WriteLine("5. Change Task Status");
-            Console.WriteLine("6. Toggle filter");
-            Console.WriteLine("7. Exit");
+            Console.WriteLine("6. Toggle Filter");
+            Console.WriteLine("7. Add Assignees");
+            Console.WriteLine("8. Exit");
 
             string option = Prompt("Select an option: ");
             switch (option) {
@@ -122,6 +123,7 @@ public class ConsoleTaskView : ITaskView
                     TaskItem newTask = new TaskItem { Id = newId, Description = description, Completed = false, Priority = priority};
                     myCollection.Add(newTask);
                     _service.AddTask(description);
+                    _service.ChangeTaskPriority(newId, priority);
                     break;
                 case "2":
                     string removeIdStr = Prompt("Enter task id to remove: ");
@@ -141,23 +143,40 @@ public class ConsoleTaskView : ITaskView
                         System.Console.WriteLine("No task with given ID");;
                         Console.ReadKey();
                     break;
-                case "3":
-                    string toggleIdStr = Prompt("Enter task id to toggle: ");
-                    if (int.TryParse(toggleIdStr, out int toggleId)) 
-                    {
-                        _service.ToggleTaskCompletion(toggleId);
-                    }
-                    break;
+                // case "3":
+                //     string toggleIdStr = Prompt("Enter task id to toggle: ");
+                //     if (int.TryParse(toggleIdStr, out int toggleId)) 
+                //     {
+                //         _service.ToggleTaskCompletion(toggleId);
+                //     }
+                //     break;
                 case "4":
                     string priorityChange = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Choose your priority")
                         .AddChoices("Low", "Middle", "High"));
 
                     System.Console.WriteLine("Enter ID to change: ");
-                    int changeIdStr = Convert.ToInt32(Console.ReadLine());
+                    if (int.TryParse(Console.ReadLine(), out int changeIdStr))
+                    {
+                        var array = _service.GetAllTasks().ToArray();
+                        foreach(var item in array)
+                        {
+                            if(item.Id == changeIdStr)
+                            {
+                                _service.ChangeTaskPriority(changeIdStr, priorityChange);
+                                TaskItem TaskToChange = myCollection.FindBy<int>(changeIdStr, (TaskItem, id) => TaskItem.Id == id);
+                                TaskToChange.Priority = priorityChange;
+                            }
+                        }
+                        System.Console.WriteLine("Please fill in a valid ID");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Please fill in a valid ID");
+                        Console.ReadKey();
+                    }
 
-                    TaskItem TaskToChange = myCollection.FindBy<int>(changeIdStr, (TaskItem, id) => TaskItem.Id == id);
-                    TaskToChange.Priority = priorityChange;
                     break;
                 case "5":
                     string changeTaskStatus = AnsiConsole.Prompt(new SelectionPrompt<string>()
@@ -165,10 +184,37 @@ public class ConsoleTaskView : ITaskView
                         .AddChoices("To-Do", "In Progress", "Done"));
 
                     System.Console.WriteLine("Enter ID to change: ");
-                    int changeidStr = Convert.ToInt32(Console.ReadLine());
-                    TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id); 
-
-                    TaskToStatusChange.Status = changeTaskStatus;
+                    if (int.TryParse(Console.ReadLine(), out int changeidStr))
+                    {
+                        var array = _service.GetAllTasks().ToArray();
+                        foreach(var item in array)
+                        {
+                            if(item.Id == changeidStr && changeTaskStatus == "Done")
+                            {
+                                TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
+                                _service.ToggleTaskCompletion(changeidStr);
+                                _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
+                                TaskToStatusChange.Status = changeTaskStatus;
+                            }
+                            if(item.Id == changeidStr && changeTaskStatus == "In Progress")
+                            {
+                                TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
+                                _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
+                                TaskToStatusChange.Status = changeTaskStatus;
+                            }
+                            if(item.Id == changeidStr && changeTaskStatus == "To-Do")
+                            {
+                                TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
+                                _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
+                                TaskToStatusChange.Status = changeTaskStatus;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Please fill in a valid ID");
+                        Console.ReadKey();
+                    }
                     break;
                 case "6":
                     string ToggleFilter = AnsiConsole.Prompt(new SelectionPrompt<string>()
@@ -204,6 +250,8 @@ public class ConsoleTaskView : ITaskView
                     }
                     break;
                 case "7":
+                    break;
+                case "8":
                     return;
                 default:
                     Console.WriteLine("Invalid option. Press any key to continue...");

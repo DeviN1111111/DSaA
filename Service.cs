@@ -6,6 +6,8 @@ public interface ITaskService
     void AddTask(string description);
     void RemoveTask(int id);
     void ToggleTaskCompletion(int id);
+    void ChangeTaskPriority(int id, string priority);
+    void ChangeTaskStatus(int id, string status);
 }
 
 public class TaskService : ITaskService 
@@ -53,6 +55,24 @@ public class TaskService : ITaskService
         var task = _tasks.FindBy(id, (t, key) => t.Id == key);
         if (task != null) {
             task.Completed = !task.Completed;
+            _repository.SaveTasks(_tasks);
+        }
+    }
+
+    public void ChangeTaskPriority(int id, string priority)
+    {
+        var task = _tasks.FindBy(id, (t, key) => t.Id == key);
+        if (task != null) {
+            task.Priority = priority;
+            _repository.SaveTasks(_tasks);
+        }
+    }
+
+    public void ChangeTaskStatus(int id, string status)
+    {
+        var task = _tasks.FindBy(id, (t, key) => t.Id == key);
+        if (task != null) {
+            task.Status = status;
             _repository.SaveTasks(_tasks);
         }
     }

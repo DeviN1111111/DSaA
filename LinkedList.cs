@@ -1,7 +1,9 @@
-public class MyLinkedList<T>
+public class MyLinkedList<T> : IMyCollection<T>
 {
     private Node<T>? _head;
     private int _count;
+    public int Count { get {return _count;} }
+    public bool Dirty {get; set;}
 
     public MyLinkedList()
     {
@@ -101,5 +103,62 @@ public class MyLinkedList<T>
             current = current.Next;
         }
         return default!;
+    }
+
+    public void Sort(Comparison<T> comparison)
+    {
+        Node<T>? current = _head;
+
+        while(current!.Next != null)
+        {
+            if (comparison(current!.Value, current.Next!.Value) > 0)
+            {
+                T temp = current.Value;
+                current.Next.Value = current.Value;
+                current.Value = temp;
+            }
+            current = current.Next;
+        }
+    }
+
+    public IMyCollection<T> Filter(Func<T, bool> predicate)
+    {
+        MyLinkedList<T> result = new MyLinkedList<T>();
+        Node<T>? current = _head;
+
+        while(current != null)
+        {
+            if(predicate(current.Value))
+            {
+                result.Add(current.Value);
+            }
+            current = current.Next;
+        }
+
+        return result;
+    }
+
+    
+    public R Reduce<R>(Func<T, R, R> accumulator)
+    {
+        R result = default(R)!;
+        Node<T> current = _head!;
+
+        while(current != null)
+        {
+            accumulator(current.Value, result);
+            current = current.Next!;
+        }
+
+        return result;
+    }
+    
+    public IMyIterator<T> GetIterator()
+    {
+        return default;
+    }
+    public IEnumerator<T> GetEnumerator()
+    {
+        return default;
     }
 }

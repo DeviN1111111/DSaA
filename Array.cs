@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : TaskItem, IComparable<T>
+public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : IComparable<T>
 {
     private T[] _items;
     private int _count;
