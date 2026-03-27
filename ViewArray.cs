@@ -62,14 +62,13 @@ public class ConsoleTaskView : ITaskView
             Console.WriteLine("\n==== ToDo List ====");
             Console.WriteLine($"Current DataType: {currentDataType}");
             Console.WriteLine("\nOptions:");
-            System.Console.WriteLine("0. Change Datatype");
+            Console.WriteLine("0. Change Datatype");
             Console.WriteLine("1. Add Task");
             Console.WriteLine("2. Remove Task");
-            // Console.WriteLine("3. Toggle Task State");
+            Console.WriteLine("3. Add Assignees");
             Console.WriteLine("4. Change Task Priority");
             Console.WriteLine("5. Change Task Status");
             Console.WriteLine("6. Toggle Filter");
-            Console.WriteLine("7. Add Assignees");
             Console.WriteLine("8. Exit");
 
             string option = Prompt("Select an option: ");
@@ -143,13 +142,32 @@ public class ConsoleTaskView : ITaskView
                         System.Console.WriteLine("No task with given ID");;
                         Console.ReadKey();
                     break;
-                // case "3":
-                //     string toggleIdStr = Prompt("Enter task id to toggle: ");
-                //     if (int.TryParse(toggleIdStr, out int toggleId)) 
-                //     {
-                //         _service.ToggleTaskCompletion(toggleId);
-                //     }
-                //     break;
+                case "3":
+                    string choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title("Add or Remove")
+                        .AddChoices("Add", "Remove"));
+                    string taskId = Prompt("Enter task id to add or remove assignees: ");
+                    if (int.TryParse(taskId, out int taskID)) 
+                    {
+                        if(choice == "Add")
+                        {
+                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
+                            string name = Console.ReadLine()!;
+                            ItemToAddAssignees.Assignees.Add(name);
+
+                            _service.ChangeTaskAssignees(taskID, name, true);
+                        }
+                        else
+                        {
+                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
+                            string name = Console.ReadLine()!;
+                            ItemToAddAssignees.Assignees.Remove(name);
+
+                            _service.ChangeTaskAssignees(taskID, name, false);
+                        }
+
+                    }
+                    break;
                 case "4":
                     string priorityChange = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Choose your priority")

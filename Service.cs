@@ -8,6 +8,7 @@ public interface ITaskService
     void ToggleTaskCompletion(int id);
     void ChangeTaskPriority(int id, string priority);
     void ChangeTaskStatus(int id, string status);
+    void ChangeTaskAssignees(int id, string name, bool add);
 }
 
 public class TaskService : ITaskService 
@@ -73,6 +74,21 @@ public class TaskService : ITaskService
         var task = _tasks.FindBy(id, (t, key) => t.Id == key);
         if (task != null) {
             task.Status = status;
+            _repository.SaveTasks(_tasks);
+        }
+    }
+
+    public void ChangeTaskAssignees(int id, string name, bool add = false)
+    {
+        var task = _tasks.FindBy(id, (t, key) => t.Id == key);
+        if (task != null && add == true) 
+        {
+            task.Assignees.Add(name);
+            _repository.SaveTasks(_tasks);
+        }
+        else
+        {
+            task!.Assignees.Remove(name);
             _repository.SaveTasks(_tasks);
         }
     }
