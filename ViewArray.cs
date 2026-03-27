@@ -33,33 +33,36 @@ public class ConsoleTaskView : ITaskView
 
     public void Run() 
     {
-        MyArray<TaskItem> myArray = new MyArray<TaskItem>();
+        IMyCollection<TaskItem> myCollection = new MyArray<TaskItem>();
+        string currentDataType = "Array";
         bool filter = false;
         string filterString = "";
         string filterType = "";
         while (true) 
         {
             Console.Clear();
-            MyArray<TaskItem> myFilterArray = myArray;
+            IMyCollection<TaskItem> myFilterCollection = myCollection;
             if(filter)
             {
                 if(filterType == "Sort")
                 {
-                    myFilterArray.Sort((a, b) => a.CreatedAt.CompareTo(b.CreatedAt));
+                    myFilterCollection.Sort((a, b) => a.CreatedAt.CompareTo(b.CreatedAt));
                 }
                 else if(filterType == "Priority")
                 {
-                    myFilterArray = (MyArray<TaskItem>)myFilterArray.Filter((task) => task.Priority == filterString);
+                    myFilterCollection = myFilterCollection.Filter((task) => task.Priority == filterString);
                 }
                 else if(filterType == "Status")
                 {
-                    myFilterArray = (MyArray<TaskItem>)myFilterArray.Filter((task) => task.Status == filterString);
+                    myFilterCollection = myFilterCollection.Filter((task) => task.Status == filterString);
                 }
             }
-            LayoutBuilder<TaskItem>.RenderLayout(myFilterArray.ToArray());
+            LayoutBuilder<TaskItem>.RenderLayout(myFilterCollection.ToArray());
 
             Console.WriteLine("\n==== ToDo List ====");
+            Console.WriteLine($"Current DataType: {currentDataType}");
             Console.WriteLine("\nOptions:");
+            Console.WriteLine("0. Switch Datatype");
             Console.WriteLine("1. Add Task");
             Console.WriteLine("2. Remove Task");
             Console.WriteLine("3. Toggle Task State");
@@ -70,10 +73,35 @@ public class ConsoleTaskView : ITaskView
 
             string option = Prompt("Select an option: ");
             switch (option) {
-                case "1":
-                    if(myArray.CountInArray() >= 5)
+                case "0":
+                    var selectedDataType = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title("Select DataType")
+                        .AddChoices("Array", "Linked List"));
+
+                    if(currentDataType == selectedDataType)
                     {
-                        System.Console.WriteLine($"Array is full, max: {myArray.Count}");
+                        Console.WriteLine($"Already using {selectedDataType}");
+                    }
+                    else if(selectedDataType == "Array")
+                    {
+                        var currentItems = myCollection.ToArray();
+                        myCollection = new MyArray<TaskItem>(currentItems);
+                        currentDataType = "Array";
+                        Console.WriteLine("Switched to MyArray");
+                    }
+                    else if(selectedDataType == "Linked List")
+                    {
+                        var currentItems = myCollection.ToArray();
+                        // myCollection = new MyLinkedList<TaskItem>(currentItems);
+                        currentDataType = "Linked List";
+                        Console.WriteLine("Switched to MyLinkedList (Test version, not implemented)");
+                    }
+                    Console.ReadKey();
+                    break;
+                case "1":
+                    if(myCollection.Count >= 5)
+                    {
+                        System.Console.WriteLine($"Collection is full, max: {myCollection.Count}");
                         Console.ReadKey();
                         break;
                     }
@@ -92,7 +120,7 @@ public class ConsoleTaskView : ITaskView
                     }
 
                     TaskItem newTask = new TaskItem { Id = newId, Description = description, Completed = false, Priority = priority};
-                    myArray.Add(newTask);
+                    myCollection.Add(newTask);
                     _service.AddTask(description);
                     break;
                 case "2":
@@ -102,11 +130,11 @@ public class ConsoleTaskView : ITaskView
                         _service.RemoveTask(removeId);
                     }
 
-                    TaskItem ItemToRemove = myArray.FindBy<int>(removeId, (item, Id) => item.Id == Id);
+                    TaskItem ItemToRemove = myCollection.FindBy<int>(removeId, (item, Id) => item.Id == Id);
                     
                     if(ItemToRemove != default)
                     {
-                        myArray.Remove(ItemToRemove);
+                        myCollection.Remove(ItemToRemove);
                         System.Console.WriteLine($"ID: {removeId} has been deleted");
                     }
                     else
@@ -128,7 +156,7 @@ public class ConsoleTaskView : ITaskView
                     System.Console.WriteLine("Enter ID to change: ");
                     int changeIdStr = Convert.ToInt32(Console.ReadLine());
 
-                    TaskItem TaskToChange = myArray.FindBy<int>(changeIdStr, (TaskItem, id) => TaskItem.Id == id);
+                    TaskItem TaskToChange = myCollection.FindBy<int>(changeIdStr, (TaskItem, id) => TaskItem.Id == id);
                     TaskToChange.Priority = priorityChange;
                     break;
                 case "5":
@@ -138,7 +166,7 @@ public class ConsoleTaskView : ITaskView
 
                     System.Console.WriteLine("Enter ID to change: ");
                     int changeidStr = Convert.ToInt32(Console.ReadLine());
-                    TaskItem TaskToStatusChange = myArray.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id); 
+                    TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id); 
 
                     TaskToStatusChange.Status = changeTaskStatus;
                     break;

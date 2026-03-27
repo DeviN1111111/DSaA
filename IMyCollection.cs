@@ -10,4 +10,5 @@ public interface IMyCollection<T>
     R Reduce<R>(Func<T, R, R> accumulator); // CHECK
     IMyIterator<T> GetIterator();
     IEnumerator<T> GetEnumerator(); // CHECK
+    T[] ToArray();
 }
