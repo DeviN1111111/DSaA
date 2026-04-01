@@ -1,4 +1,6 @@
-public class MyLinkedList<T> : IMyCollection<T>
+using System.Collections;
+
+public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T> where T : IComparable<T>
 {
     private Node<T>? _head;
     private int _count;
@@ -153,12 +155,21 @@ public class MyLinkedList<T> : IMyCollection<T>
         return result;
     }
     
-    public IMyIterator<T> GetIterator()
-    {
-        return default;
-    }
     public IEnumerator<T> GetEnumerator()
     {
-        return default;
+        Node<T>? current = _head;
+        while (current != null)
+        {
+            yield return current.Value;
+            current = current.Next;
+        }
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+    public IMyIterator<T> GetIterator()
+    {
+        return new MyIterator<T>(_head);
     }
 }
