@@ -27,16 +27,34 @@ public class LayoutBuilder<T> where T : TaskItem
             if (items[i] == null) continue;
 
             if (items[i].Status == "To-Do")
-            {
-                todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
+            {   
+                if (items[i].Assignees != null && items[i].Assignees.Count > 0)
+                {
+                    string assigneesStr = string.Join(", ", items[i].Assignees);
+                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
+                }
+                else
+                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
             }
             else if (items[i].Status == "In Progress")
             {
-                inProgressTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
+                if (items[i].Assignees != null && items[i].Assignees.Count > 0)
+                {
+                    string assigneesStr = string.Join(", ", items[i].Assignees);
+                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
+                }
+                else
+                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
             }
             else if (items[i].Status == "Done")
             {
-                doneTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
+                if (items[i].Assignees != null && items[i].Assignees.Count > 0)
+                {
+                    string assigneesStr = string.Join(", ", items[i].Assignees);
+                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
+                }
+                else
+                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
             }
         }
 

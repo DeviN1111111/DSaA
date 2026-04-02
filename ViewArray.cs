@@ -94,17 +94,11 @@ public class ConsoleTaskView : ITaskView
                         var currentItems = myCollection.ToArray();
                         myCollection = new MyLinkedList<TaskItem>(currentItems);
                         currentDataType = "Linked List";
-                        // Console.WriteLine("Switched to MyLinkedList (Test version, not implemented)");
+                        Console.WriteLine("Switched to MyLinkedList");
                     }
                     Console.ReadKey();
                     break;
                 case "1":
-                    if(myCollection.Count >= 5)
-                    {
-                        System.Console.WriteLine($"Collection is full, max: {myCollection.Count}");
-                        Console.ReadKey();
-                        break;
-                    }
                     string description = Prompt("Enter task description: ");
                     string priority = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Choose your priority")
@@ -151,7 +145,7 @@ public class ConsoleTaskView : ITaskView
                     {
                         if(choice == "Add")
                         {
-                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id); //BUG = Als je ID invult die niet bestaat crasht die.
+                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
                             if(ItemToAddAssignees == null)
                             {
                                 System.Console.WriteLine("Doesn't exist!");
@@ -166,7 +160,7 @@ public class ConsoleTaskView : ITaskView
                         }
                         else
                         {
-                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id); //BUG = Als je ID invult die niet bestaat crasht die.
+                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
                             if(ItemToAddAssignees == null)
                             {
                                 System.Console.WriteLine("Doesn't exist!");
