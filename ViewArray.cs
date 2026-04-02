@@ -31,6 +31,15 @@ public class ConsoleTaskView : ITaskView
         return Console.ReadLine();
     }
 
+    string SelectUser()
+    {
+        var selecteduser = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("Select User")
+            .AddChoices("Cheng", "Devin", "Carlos"));  
+
+        return selecteduser;      
+    }
+
     public void Run() 
     {
         IMyCollection<TaskItem> myCollection = new MyArray<TaskItem>();
@@ -38,6 +47,10 @@ public class ConsoleTaskView : ITaskView
         bool filter = false;
         string filterString = "";
         string filterType = "";
+
+        System.Console.WriteLine("\n==== Select User ====");
+        var currentUser = SelectUser();
+
         while (true) 
         {
             Console.Clear();
@@ -152,8 +165,8 @@ public class ConsoleTaskView : ITaskView
                                 Console.ReadKey();
                                 break;
                             }
-                            System.Console.WriteLine("Enter name:");
-                            string name = Console.ReadLine()!;
+                            System.Console.WriteLine("Choose User:");
+                            string name = SelectUser();
                             ItemToAddAssignees.Assignees.Add(name);
 
                             _service.ChangeTaskAssignees(taskID, name, true);
@@ -167,8 +180,8 @@ public class ConsoleTaskView : ITaskView
                                 Console.ReadKey();
                                 break;
                             }
-                            System.Console.WriteLine("Enter name:");
-                            string name = Console.ReadLine()!;
+                            System.Console.WriteLine("Choose User:");
+                            string name = SelectUser();
                             ItemToAddAssignees.Assignees.Remove(name);
 
                             _service.ChangeTaskAssignees(taskID, name, false);
@@ -176,7 +189,7 @@ public class ConsoleTaskView : ITaskView
 
                     }
                     break;
-                case "4":
+                case "4":  
                     string priorityChange = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Choose your priority")
                         .AddChoices("Low", "Middle", "High"));
@@ -187,7 +200,7 @@ public class ConsoleTaskView : ITaskView
                         var array = _service.GetAllTasks().ToArray();
                         foreach(var item in array)
                         {
-                            if(item.Id == changeIdStr)
+                            if(item.Id == changeIdStr && item.Assignees.Contains(currentUser))
                             {
                                 _service.ChangeTaskPriority(changeIdStr, priorityChange);
                                 TaskItem TaskToChange = myCollection.FindBy<int>(changeIdStr, (TaskItem, id) => TaskItem.Id == id);

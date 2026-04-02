@@ -21,3 +21,5 @@ public class TaskItem : IComparable<TaskItem>
         return $"[{Id}] {Description} - {(Completed ? "✓" : "✗")}";
     }
 }
+
+// Tot een met 4.1 Hash Map
