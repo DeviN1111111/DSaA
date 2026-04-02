@@ -165,6 +165,6 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : IComparable
     }
     public IMyIterator<T> GetIterator()
     {
-        return new MyIterator<T>(_items, _count);
+        return new MyArrayIterator<T>(_items, _count);
     }
 }
