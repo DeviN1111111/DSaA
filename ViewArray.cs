@@ -207,8 +207,6 @@ public class ConsoleTaskView : ITaskView
                                 TaskToChange.Priority = priorityChange;
                             }
                         }
-                        System.Console.WriteLine("Please fill in a valid ID");
-                        Console.ReadKey();
                     }
                     else
                     {
@@ -228,24 +226,27 @@ public class ConsoleTaskView : ITaskView
                         var array = _service.GetAllTasks().ToArray();
                         foreach(var item in array)
                         {
-                            if(item.Id == changeidStr && changeTaskStatus == "Done")
-                            {
-                                TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
-                                _service.ToggleTaskCompletion(changeidStr);
-                                _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
-                                TaskToStatusChange.Status = changeTaskStatus;
-                            }
-                            if(item.Id == changeidStr && changeTaskStatus == "In Progress")
-                            {
-                                TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
-                                _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
-                                TaskToStatusChange.Status = changeTaskStatus;
-                            }
-                            if(item.Id == changeidStr && changeTaskStatus == "To-Do")
-                            {
-                                TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
-                                _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
-                                TaskToStatusChange.Status = changeTaskStatus;
+                            if (item.Assignees.Contains(currentUser))
+                            {                        
+                                if(item.Id == changeidStr && changeTaskStatus == "Done")
+                                {
+                                    TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
+                                    _service.ToggleTaskCompletion(changeidStr);
+                                    _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
+                                    TaskToStatusChange.Status = changeTaskStatus;
+                                }
+                                if(item.Id == changeidStr && changeTaskStatus == "In Progress")
+                                {
+                                    TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
+                                    _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
+                                    TaskToStatusChange.Status = changeTaskStatus;
+                                }
+                                if(item.Id == changeidStr && changeTaskStatus == "To-Do")
+                                {
+                                    TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
+                                    _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
+                                    TaskToStatusChange.Status = changeTaskStatus;
+                                }
                             }
                         }
                     }

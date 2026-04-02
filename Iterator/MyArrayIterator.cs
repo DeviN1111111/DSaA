@@ -20,7 +20,6 @@ public class MyArrayIterator<T> : IMyIterator<T>
     {
         return _items[_index++];
     }
-
     public void Reset()
     {
         _index = 0;
