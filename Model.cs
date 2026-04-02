@@ -8,8 +8,7 @@ public class TaskItem : IComparable<TaskItem>
     public string Priority { get; set; } = "";
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public string Status { get; set; } = "To-Do";
-    public MyArray<string> Assignees = new MyArray<string>();
-    public MyArray<TaskItem> myArray = new MyArray<TaskItem>();
+    public MyArray<string> Assignees { get; set; } = new MyArray<string>();
 
     public int CompareTo(TaskItem other)
     {

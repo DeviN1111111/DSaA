@@ -170,6 +170,7 @@ public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T> where T : ICompa
     }
     public IMyIterator<T> GetIterator()
     {
-        return new MyIterator<T>(_head);
+        // return new MyIterator<T>(_head);
+        return default;
     }
 }

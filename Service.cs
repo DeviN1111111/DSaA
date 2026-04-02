@@ -36,7 +36,7 @@ public class TaskService : ITaskService
                 newId = arr[i].Id + 1;
         }
 
-        var newTask = new TaskItem { Id = newId, Description = description, Completed = false };
+        var newTask = new TaskItem { Id = newId, Description = description, Completed = false};
 
         _tasks.Add(newTask);
         _repository.SaveTasks(_tasks);

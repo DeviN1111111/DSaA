@@ -65,7 +65,7 @@ public class ConsoleTaskView : ITaskView
             Console.WriteLine("0. Change Datatype");
             Console.WriteLine("1. Add Task");
             Console.WriteLine("2. Remove Task");
-            Console.WriteLine("3. Add Assignees");
+            Console.WriteLine("3. Add or Remove Assignees");
             Console.WriteLine("4. Change Task Priority");
             Console.WriteLine("5. Change Task Status");
             Console.WriteLine("6. Toggle Filter");
@@ -92,9 +92,9 @@ public class ConsoleTaskView : ITaskView
                     else if(selectedDataType == "Linked List")
                     {
                         var currentItems = myCollection.ToArray();
-                        // myCollection = new MyLinkedList<TaskItem>(currentItems);
+                        myCollection = new MyLinkedList<TaskItem>(currentItems);
                         currentDataType = "Linked List";
-                        Console.WriteLine("Switched to MyLinkedList (Test version, not implemented)");
+                        // Console.WriteLine("Switched to MyLinkedList (Test version, not implemented)");
                     }
                     Console.ReadKey();
                     break;
@@ -151,7 +151,14 @@ public class ConsoleTaskView : ITaskView
                     {
                         if(choice == "Add")
                         {
-                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
+                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id); //BUG = Als je ID invult die niet bestaat crasht die.
+                            if(ItemToAddAssignees == null)
+                            {
+                                System.Console.WriteLine("Doesn't exist!");
+                                Console.ReadKey();
+                                break;
+                            }
+                            System.Console.WriteLine("Enter name:");
                             string name = Console.ReadLine()!;
                             ItemToAddAssignees.Assignees.Add(name);
 
@@ -159,7 +166,14 @@ public class ConsoleTaskView : ITaskView
                         }
                         else
                         {
-                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
+                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id); //BUG = Als je ID invult die niet bestaat crasht die.
+                            if(ItemToAddAssignees == null)
+                            {
+                                System.Console.WriteLine("Doesn't exist!");
+                                Console.ReadKey();
+                                break;
+                            }
+                            System.Console.WriteLine("Enter name:");
                             string name = Console.ReadLine()!;
                             ItemToAddAssignees.Assignees.Remove(name);
 
