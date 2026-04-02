@@ -151,7 +151,7 @@ public class ConsoleTaskView : ITaskView
                     {
                         if(choice == "Add")
                         {
-                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id); //BUG = Als je ID invult die niet bestaat crasht die.
+                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
                             if(ItemToAddAssignees == null)
                             {
                                 System.Console.WriteLine("Doesn't exist!");
@@ -166,7 +166,7 @@ public class ConsoleTaskView : ITaskView
                         }
                         else
                         {
-                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id); //BUG = Als je ID invult die niet bestaat crasht die.
+                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
                             if(ItemToAddAssignees == null)
                             {
                                 System.Console.WriteLine("Doesn't exist!");
