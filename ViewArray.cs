@@ -94,17 +94,11 @@ public class ConsoleTaskView : ITaskView
                         var currentItems = myCollection.ToArray();
                         myCollection = new MyLinkedList<TaskItem>(currentItems);
                         currentDataType = "Linked List";
-                        // Console.WriteLine("Switched to MyLinkedList (Test version, not implemented)");
+                        Console.WriteLine("Switched to MyLinkedList");
                     }
                     Console.ReadKey();
                     break;
                 case "1":
-                    if(myCollection.Count >= 5)
-                    {
-                        System.Console.WriteLine($"Collection is full, max: {myCollection.Count}");
-                        Console.ReadKey();
-                        break;
-                    }
                     string description = Prompt("Enter task description: ");
                     string priority = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Choose your priority")

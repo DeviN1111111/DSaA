@@ -131,7 +131,10 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : IComparable
 
         for (int i = 0; i < Count; i++)
         {
-            copy[i] = items[i];
+            if(items[i] != null)
+            {
+                copy[i] = items[i];
+            }
         }
 
         return copy;
