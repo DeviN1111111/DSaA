@@ -1,1 +1,31 @@
-[]
+[
+  {
+    "Id": 1,
+    "Description": "Wash dishes",
+    "Completed": true,
+    "Priority": "Low",
+    "CreatedAt": "2026-04-07T15:42:12.508836+02:00",
+    "Status": "To-Do",
+    "Assignees": [
+      "Cheng"
+    ]
+  },
+  {
+    "Id": 2,
+    "Description": "dasdsa",
+    "Completed": true,
+    "Priority": "Middle",
+    "CreatedAt": "2026-04-07T16:37:38.591201+02:00",
+    "Status": "Done",
+    "Assignees": []
+  },
+  {
+    "Id": 3,
+    "Description": "dsadsa",
+    "Completed": false,
+    "Priority": "Middle",
+    "CreatedAt": "2026-04-07T16:45:46.060135+02:00",
+    "Status": "To-Do",
+    "Assignees": []
+  }
+]

@@ -34,6 +34,10 @@ public class ConsoleTaskView : ITaskView
     public void Run() 
     {
         IMyCollection<TaskItem> myCollection = new MyArray<TaskItem>();
+        foreach (var task in _service.GetAllTasks())
+        {
+            myCollection.Add(task);
+        }
         string currentDataType = "Array";
         bool filter = false;
         string filterString = "";
@@ -130,6 +134,7 @@ public class ConsoleTaskView : ITaskView
                     if(ItemToRemove != default)
                     {
                         myCollection.Remove(ItemToRemove);
+                        _service.RemoveTask(removeId);
                         System.Console.WriteLine($"ID: {removeId} has been deleted");
                     }
                     else
@@ -154,7 +159,13 @@ public class ConsoleTaskView : ITaskView
                             }
                             System.Console.WriteLine("Enter name:");
                             string name = Console.ReadLine()!;
-                            ItemToAddAssignees.Assignees.Add(name);
+                            string[] newAssignees = new string[ItemToAddAssignees.Assignees.Length + 1];
+                            for (int i = 0; i < ItemToAddAssignees.Assignees.Length; i++)
+                            {
+                                newAssignees[i] = ItemToAddAssignees.Assignees[i];
+                            }
+                            newAssignees[ItemToAddAssignees.Assignees.Length] = name;
+                            ItemToAddAssignees.Assignees = newAssignees;
 
                             _service.ChangeTaskAssignees(taskID, name, true);
                         }
@@ -169,7 +180,20 @@ public class ConsoleTaskView : ITaskView
                             }
                             System.Console.WriteLine("Enter name:");
                             string name = Console.ReadLine()!;
-                            ItemToAddAssignees.Assignees.Remove(name);
+                            int index = Array.IndexOf(ItemToAddAssignees.Assignees, name);
+                            if (index != -1)
+                            {
+                                string[] newAssignees = new string[ItemToAddAssignees.Assignees.Length - 1];
+                                for (int i = 0; i < index; i++)
+                                {
+                                    newAssignees[i] = ItemToAddAssignees.Assignees[i];
+                                }
+                                for (int i = index + 1; i < ItemToAddAssignees.Assignees.Length; i++)
+                                {
+                                    newAssignees[i - 1] = ItemToAddAssignees.Assignees[i];
+                                }
+                                ItemToAddAssignees.Assignees = newAssignees;
+                            }
 
                             _service.ChangeTaskAssignees(taskID, name, false);
                         }
@@ -194,8 +218,6 @@ public class ConsoleTaskView : ITaskView
                                 TaskToChange.Priority = priorityChange;
                             }
                         }
-                        System.Console.WriteLine("Please fill in a valid ID");
-                        Console.ReadKey();
                     }
                     else
                     {

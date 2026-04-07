@@ -83,12 +83,6 @@ public class TaskService : ITaskService
         var task = _tasks.FindBy(id, (t, key) => t.Id == key);
         if (task != null && add == true) 
         {
-            task.Assignees.Add(name);
-            _repository.SaveTasks(_tasks);
-        }
-        else
-        {
-            task!.Assignees.Remove(name);
             _repository.SaveTasks(_tasks);
         }
     }
