@@ -37,8 +37,7 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
 
     private int GetIndex(Tkey key)
     {
-        if (key == null)
-            throw new ArgumentNullException(nameof(key));
+        if (key == null) return -1;
         int hash = key.GetHashCode(); // Hash the key into an integer -> "35421" -> 35421 % Capacity("5") -> 1 so it goes to index 1
         int index = Math.Abs(hash) % Capacity; // hash has to be postive
         return index;
@@ -69,7 +68,7 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
         
         while(current != null)
         {
-            if(current.Key.Equals(key))
+            if(current.Key != null && current.Key.Equals(key))
             {
                 current.Value = item; // Update the value if the key already exists
                 return;
@@ -94,7 +93,7 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
         Entry<Tkey, TValue>? previous = null;
         while(current != null)
         {
-            if(current.Key.Equals(key))
+            if(current.Key != null && current.Key.Equals(key))
             {
                 if(previous == null)
                 {
@@ -122,7 +121,7 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
             while(current != null)
             {
                 var next = current.Next; // Store the next entry before rehashing 
-                int newIndex = Math.Abs(current.Key.GetHashCode()) % newCapacity; 
+                int newIndex = current.Key != null ? Math.Abs(current.Key.GetHashCode()) % newCapacity : 0; 
 
                 current.Next = newBuckets[newIndex];
                 newBuckets[newIndex] = current;
@@ -235,16 +234,7 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
     }
     public IEnumerator<TValue> GetEnumerator()
     {
-        for (int i = 0; i < buckets.Length; i++)
-        {
-            var current = buckets[i];
-
-            while (current != null)
-            {
-                yield return current.Value;
-                current = current.Next;
-            }
-        }
+        return ((IEnumerable<TValue>)ToArray()).GetEnumerator();
     }
     public IMyIterator<TValue> GetIterator()
     {
