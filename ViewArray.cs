@@ -80,7 +80,7 @@ public class ConsoleTaskView : ITaskView
                 case "0":
                     var selectedDataType = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Select DataType")
-                        .AddChoices("Array", "Linked List"));
+                        .AddChoices("Array", "Linked List", "Hashmap"));
 
                     if(currentDataType == selectedDataType)
                     {
@@ -99,6 +99,16 @@ public class ConsoleTaskView : ITaskView
                         myCollection = new MyLinkedList<TaskItem>(currentItems);
                         currentDataType = "Linked List";
                         Console.WriteLine("Switched to MyLinkedList");
+                    }
+                    else if(selectedDataType == "Hashmap")
+                    {
+                        var currentItems = myCollection.ToArray();
+                        myCollection = (IMyCollection<TaskItem>)new MyHashMap<int, TaskItem>(
+                            item => item.Id,
+                            currentItems
+                        );
+                        currentDataType = "Hashmap";
+                        Console.WriteLine("Switched to MyHashMap");
                     }
                     Console.ReadKey();
                     break;
