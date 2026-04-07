@@ -200,11 +200,15 @@ public class ConsoleTaskView : ITaskView
                         var array = _service.GetAllTasks().ToArray();
                         foreach(var item in array)
                         {
-                            if(item.Id == changeIdStr && (item.Assignees?.Contains(currentUser) ?? false))
+                            if(item.Id == changeIdStr && item.Assignees.Contains(currentUser))
                             {
                                 _service.ChangeTaskPriority(changeIdStr, priorityChange);
                                 TaskItem TaskToChange = myCollection.FindBy<int>(changeIdStr, (TaskItem, id) => TaskItem.Id == id);
                                 TaskToChange.Priority = priorityChange;
+                            }
+                            else
+                            {
+                                System.Console.WriteLine("Access denied. You are not logged in as the assigned user.");
                             }
                         }
                     }
@@ -227,20 +231,20 @@ public class ConsoleTaskView : ITaskView
                         foreach(var item in array)
                         {
                             {                        
-                                if(item.Id == changeidStr && changeTaskStatus == "Done" && (item.Assignees?.Contains(currentUser) ?? false))
+                                if(item.Id == changeidStr && changeTaskStatus == "Done" && item.Assignees.Contains(currentUser))
                                 {
                                     TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
                                     _service.ToggleTaskCompletion(changeidStr);
                                     _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
                                     TaskToStatusChange.Status = changeTaskStatus;
                                 }
-                                if(item.Id == changeidStr && changeTaskStatus == "In Progress" && (item.Assignees?.Contains(currentUser) ?? false))
+                                if(item.Id == changeidStr && changeTaskStatus == "In Progress" && item.Assignees.Contains(currentUser))
                                 {
                                     TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
                                     _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
                                     TaskToStatusChange.Status = changeTaskStatus;
                                 }
-                                if(item.Id == changeidStr && changeTaskStatus == "To-Do" && (item.Assignees?.Contains(currentUser) ?? false))
+                                if(item.Id == changeidStr && changeTaskStatus == "To-Do" && item.Assignees.Contains(currentUser))
                                 {
                                     TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
                                     _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
