@@ -226,22 +226,21 @@ public class ConsoleTaskView : ITaskView
                         var array = _service.GetAllTasks().ToArray();
                         foreach(var item in array)
                         {
-                            if (item.Assignees.Contains(currentUser))
                             {                        
-                                if(item.Id == changeidStr && changeTaskStatus == "Done")
+                                if(item.Id == changeidStr && changeTaskStatus == "Done" && item.Assignees.Contains(currentUser))
                                 {
                                     TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
                                     _service.ToggleTaskCompletion(changeidStr);
                                     _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
                                     TaskToStatusChange.Status = changeTaskStatus;
                                 }
-                                if(item.Id == changeidStr && changeTaskStatus == "In Progress")
+                                if(item.Id == changeidStr && changeTaskStatus == "In Progress" && item.Assignees.Contains(currentUser))
                                 {
                                     TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
                                     _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
                                     TaskToStatusChange.Status = changeTaskStatus;
                                 }
-                                if(item.Id == changeidStr && changeTaskStatus == "To-Do")
+                                if(item.Id == changeidStr && changeTaskStatus == "To-Do" && item.Assignees.Contains(currentUser))
                                 {
                                     TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
                                     _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
