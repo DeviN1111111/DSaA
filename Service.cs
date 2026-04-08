@@ -9,6 +9,7 @@ public interface ITaskService
     void ChangeTaskPriority(int id, string priority);
     void ChangeTaskStatus(int id, string status);
     void ChangeTaskAssignees(int id, string name, bool add);
+    void ChangeTaskPrevious(int id, int? previousTask);
 }
 
 public class TaskService : ITaskService 
@@ -83,6 +84,15 @@ public class TaskService : ITaskService
         var task = _tasks.FindBy(id, (t, key) => t.Id == key);
         if (task != null && add == true) 
         {
+            _repository.SaveTasks(_tasks);
+        }
+    }
+    public void ChangeTaskPrevious(int id, int? previousTaskId)
+    {
+        var task = _tasks.FindBy(id, (t, key) => t.Id == key);
+        if (task != null)
+        {
+            task.Previous = previousTaskId;
             _repository.SaveTasks(_tasks);
         }
     }

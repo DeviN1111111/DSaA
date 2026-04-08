@@ -31,30 +31,30 @@ public class LayoutBuilder<T> where T : TaskItem
                 if (items[i].Assignees != null && items[i].Assignees.Length > 0)
                 {
                     string assigneesStr = string.Join(", ", items[i].Assignees);
-                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
+                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr} | Previous Task: {items[i].Previous}");
                 }
                 else
-                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
+                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Previous Task: {items[i].Previous}");
             }
             else if (items[i].Status == "In Progress")
             {
                 if (items[i].Assignees != null && items[i].Assignees.Length > 0)
                 {
                     string assigneesStr = string.Join(", ", items[i].Assignees);
-                    inProgressTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
+                    inProgressTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr} | Previous Task: {items[i].Previous}");
                 }
                 else
-                    inProgressTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
+                    inProgressTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Previous Task: {items[i].Previous}");
             }
             else if (items[i].Status == "Done")
             {
                 if (items[i].Assignees != null && items[i].Assignees.Length > 0)
                 {
                     string assigneesStr = string.Join(", ", items[i].Assignees);
-                    doneTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
+                    doneTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr} | Previous Task: {items[i].Previous}");
                 }
                 else
-                    doneTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
+                    doneTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Previous Task: {items[i].Previous}");
             }
         }
 

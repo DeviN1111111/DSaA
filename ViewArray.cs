@@ -86,6 +86,7 @@ public class ConsoleTaskView : ITaskView
             Console.WriteLine("4. Change Task Priority");
             Console.WriteLine("5. Change Task Status");
             Console.WriteLine("6. Toggle Filter");
+            Console.WriteLine("7. Assign Previous Task");
             Console.WriteLine("8. Exit");
 
             string option = Prompt("Select an option: ");
@@ -180,8 +181,7 @@ public class ConsoleTaskView : ITaskView
                                 Console.ReadKey();
                                 break;
                             }
-                            System.Console.WriteLine("Enter name:");
-                            string name = Console.ReadLine()!;
+                            string name = SelectUser();
                             string[] newAssignees = new string[ItemToAddAssignees.Assignees.Length + 1];
                             for (int i = 0; i < ItemToAddAssignees.Assignees.Length; i++)
                             {
@@ -201,8 +201,7 @@ public class ConsoleTaskView : ITaskView
                                 Console.ReadKey();
                                 break;
                             }
-                            System.Console.WriteLine("Enter name:");
-                            string name = Console.ReadLine()!;
+                            string name = SelectUser();
                             int index = Array.IndexOf(ItemToAddAssignees.Assignees, name);
                             if (index != -1)
                             {
@@ -234,16 +233,24 @@ public class ConsoleTaskView : ITaskView
                         var array = _service.GetAllTasks().ToArray();
                         foreach(var item in array)
                         {
-                            if(item.Id == changeIdStr && item.Assignees.Contains(currentUser))
+                            if (item.Id == changeIdStr)
                             {
-                                _service.ChangeTaskPriority(changeIdStr, priorityChange);
-                                TaskItem TaskToChange = myCollection.FindBy<int>(changeIdStr, (TaskItem, id) => TaskItem.Id == id);
-                                TaskToChange.Priority = priorityChange;
-                            }
-                            else
-                            {
-                                System.Console.WriteLine("Access denied. You are not logged in as the assigned user.");
-                            }
+                                if (item.Assignees.Contains(currentUser) || item.Assignees.Length == 0)
+                                {
+                                    _service.ChangeTaskPriority(changeIdStr, priorityChange);
+                                    TaskItem taskToChange = myCollection.FindBy<int>(
+                                        changeIdStr,
+                                        (taskItem, id) => taskItem.Id == id
+                                    );
+                                    taskToChange.Priority = priorityChange;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Access denied. You are not logged in as the assigned user.");
+                                    Console.ReadKey();
+                                }
+                                break;
+                            }                          
                         }
                     }
                     else
@@ -251,45 +258,52 @@ public class ConsoleTaskView : ITaskView
                         System.Console.WriteLine("Please fill in a valid ID");
                         Console.ReadKey();
                     }
-
                     break;
                 case "5":
                     string changeTaskStatus = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Choose your Status")
                         .AddChoices("To-Do", "In Progress", "Done"));
 
-                    System.Console.WriteLine("Enter ID to change: ");
+                    Console.WriteLine("Enter ID to change: ");
+
                     if (int.TryParse(Console.ReadLine(), out int changeidStr))
                     {
-                        var array = _service.GetAllTasks().ToArray();
-                        foreach(var item in array)
+                        var task = _service.GetAllTasks().FirstOrDefault(t => t.Id == changeidStr);
+
+                        if (task == null)
                         {
-                            {                        
-                                if(item.Id == changeidStr && changeTaskStatus == "Done" && item.Assignees.Contains(currentUser))
-                                {
-                                    TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
-                                    _service.ToggleTaskCompletion(changeidStr);
-                                    _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
-                                    TaskToStatusChange.Status = changeTaskStatus;
-                                }
-                                if(item.Id == changeidStr && changeTaskStatus == "In Progress" && item.Assignees.Contains(currentUser))
-                                {
-                                    TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
-                                    _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
-                                    TaskToStatusChange.Status = changeTaskStatus;
-                                }
-                                if(item.Id == changeidStr && changeTaskStatus == "To-Do" && item.Assignees.Contains(currentUser))
-                                {
-                                    TaskItem TaskToStatusChange = myCollection.FindBy<int>(changeidStr, (TaskItem, id) => TaskItem.Id == id);
-                                    _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
-                                    TaskToStatusChange.Status = changeTaskStatus;
-                                }
-                            }
+                            Console.WriteLine("Task not found.");
+                            Console.ReadKey();
+                            break;
                         }
+
+                        if (task.Assignees.Length != 0 && !task.Assignees.Contains(currentUser))
+                        {
+                            Console.WriteLine("Access denied. You are not logged in as the assigned user.");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        TaskItem taskToStatusChange = myCollection.FindBy<int>(changeidStr, (taskItem, id) => taskItem.Id == id);
+                        var prevTask = _service.GetAllTasks().FirstOrDefault(t => t.Id == task.Previous);
+
+                        if (changeTaskStatus == "Done")
+                        {
+                            if (prevTask != null && !prevTask.Completed)
+                            {
+                                Console.WriteLine("You cannot mark this task as Done until the previous task is completed.");
+                                Console.ReadKey();
+                                break;
+                            }
+
+                            _service.ToggleTaskCompletion(changeidStr);
+                        }
+                        _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
+                        taskToStatusChange.Status = changeTaskStatus;
                     }
                     else
                     {
-                        System.Console.WriteLine("Please fill in a valid ID");
+                        Console.WriteLine("Please fill in a valid ID");
                         Console.ReadKey();
                     }
                     break;
@@ -327,7 +341,86 @@ public class ConsoleTaskView : ITaskView
                     }
                     break;
                 case "7":
-                
+                    string previousChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                        .Title("Add or Remove Previous Task")
+                        .AddChoices("Add", "Remove"));
+
+                    string currentTaskIdStr = Prompt("Enter task id to assign task dependency: ");
+                    if (!int.TryParse(currentTaskIdStr, out int currentTaskId))
+                    {
+                        Console.WriteLine("Please fill in a valid task ID");
+                        Console.ReadKey();
+                        break;
+                    }
+
+                    var allTasks = _service.GetAllTasks().ToArray();
+                    TaskItem? selectedTask = null;
+                    bool previousTaskExists = false;
+
+                    foreach (var item in allTasks)
+                    {
+                        if (item.Id == currentTaskId)
+                        {
+                            selectedTask = myCollection.FindBy<int>(currentTaskId, (taskItem, id) => taskItem.Id == id);
+                            break;
+                        }
+                    }
+
+                    if (selectedTask == null)
+                    {
+                        Console.WriteLine("Task not found.");
+                        Console.ReadKey();
+                        break;
+                    }
+
+                    if (previousChoice == "Add")
+                    {
+                        string previousTaskIdStr = Prompt("Enter previous task id: ");
+                        if (!int.TryParse(previousTaskIdStr, out int previousTaskId))
+                        {
+                            Console.WriteLine("Please fill in a valid previous task ID");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        if (previousTaskId == selectedTask.Id)
+                        {
+                            Console.WriteLine("A task cannot be its own previous task.");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        foreach (var item in allTasks)
+                        {
+                            if (item.Id == previousTaskId)
+                            {
+                                previousTaskExists = true;
+                                break;
+                            }
+                        }
+
+                        if (!previousTaskExists)
+                        {
+                            Console.WriteLine("Previous task not found.");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        _service.ChangeTaskPrevious(currentTaskId, previousTaskId);
+                        selectedTask.Previous = previousTaskId;
+
+                        Console.WriteLine("Dependency task assigned.");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        _service.ChangeTaskPrevious(currentTaskId, null);
+                        selectedTask.Previous = null;
+
+                        Console.WriteLine("Dependency task removed.");
+                        Console.ReadKey();
+                    }
+
                     break;
                 case "8":
                     return;
