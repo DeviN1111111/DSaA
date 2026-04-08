@@ -293,6 +293,7 @@ public class ConsoleTaskView : ITaskView
                     }
                     break;
                 case "7":
+                
                     break;
                 case "8":
                     return;
