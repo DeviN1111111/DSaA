@@ -129,7 +129,7 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : IComparable
     {
         var copy = new T[items.Length];
 
-        for (int i = 0; i < Count; i++)
+        for (int i = 0; i < items.Length; i++)
         {
             if(items[i] != null)
             {

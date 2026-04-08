@@ -43,6 +43,10 @@ public class ConsoleTaskView : ITaskView
     public void Run() 
     {
         IMyCollection<TaskItem> myCollection = new MyArray<TaskItem>();
+        foreach (var task in _service.GetAllTasks())
+        {
+            myCollection.Add(task);
+        }
         string currentDataType = "Array";
         bool filter = false;
         string filterString = "";
@@ -89,7 +93,7 @@ public class ConsoleTaskView : ITaskView
                 case "0":
                     var selectedDataType = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Select DataType")
-                        .AddChoices("Array", "Linked List"));
+                        .AddChoices("Array", "Linked List", "Hashmap"));
 
                     if(currentDataType == selectedDataType)
                     {
@@ -108,6 +112,16 @@ public class ConsoleTaskView : ITaskView
                         myCollection = new MyLinkedList<TaskItem>(currentItems);
                         currentDataType = "Linked List";
                         Console.WriteLine("Switched to MyLinkedList");
+                    }
+                    else if(selectedDataType == "Hashmap")
+                    {
+                        var currentItems = myCollection.ToArray();
+                        myCollection = (IMyCollection<TaskItem>)new MyHashMap<int, TaskItem>(
+                            item => item.Id,
+                            currentItems
+                        );
+                        currentDataType = "Hashmap";
+                        Console.WriteLine("Switched to MyHashMap");
                     }
                     Console.ReadKey();
                     break;
@@ -143,6 +157,7 @@ public class ConsoleTaskView : ITaskView
                     if(ItemToRemove != default)
                     {
                         myCollection.Remove(ItemToRemove);
+                        _service.RemoveTask(removeId);
                         System.Console.WriteLine($"ID: {removeId} has been deleted");
                     }
                     else
@@ -165,9 +180,15 @@ public class ConsoleTaskView : ITaskView
                                 Console.ReadKey();
                                 break;
                             }
-                            System.Console.WriteLine("Choose User:");
-                            string name = SelectUser();
-                            ItemToAddAssignees.Assignees.Add(name);
+                            System.Console.WriteLine("Enter name:");
+                            string name = Console.ReadLine()!;
+                            string[] newAssignees = new string[ItemToAddAssignees.Assignees.Length + 1];
+                            for (int i = 0; i < ItemToAddAssignees.Assignees.Length; i++)
+                            {
+                                newAssignees[i] = ItemToAddAssignees.Assignees[i];
+                            }
+                            newAssignees[ItemToAddAssignees.Assignees.Length] = name;
+                            ItemToAddAssignees.Assignees = newAssignees;
 
                             _service.ChangeTaskAssignees(taskID, name, true);
                         }
@@ -180,9 +201,22 @@ public class ConsoleTaskView : ITaskView
                                 Console.ReadKey();
                                 break;
                             }
-                            System.Console.WriteLine("Choose User:");
-                            string name = SelectUser();
-                            ItemToAddAssignees.Assignees.Remove(name);
+                            System.Console.WriteLine("Enter name:");
+                            string name = Console.ReadLine()!;
+                            int index = Array.IndexOf(ItemToAddAssignees.Assignees, name);
+                            if (index != -1)
+                            {
+                                string[] newAssignees = new string[ItemToAddAssignees.Assignees.Length - 1];
+                                for (int i = 0; i < index; i++)
+                                {
+                                    newAssignees[i] = ItemToAddAssignees.Assignees[i];
+                                }
+                                for (int i = index + 1; i < ItemToAddAssignees.Assignees.Length; i++)
+                                {
+                                    newAssignees[i - 1] = ItemToAddAssignees.Assignees[i];
+                                }
+                                ItemToAddAssignees.Assignees = newAssignees;
+                            }
 
                             _service.ChangeTaskAssignees(taskID, name, false);
                         }

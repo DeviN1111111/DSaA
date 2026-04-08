@@ -28,7 +28,7 @@ public class LayoutBuilder<T> where T : TaskItem
 
             if (items[i].Status == "To-Do")
             {   
-                if (items[i].Assignees != null && items[i].Assignees.Count > 0)
+                if (items[i].Assignees != null && items[i].Assignees.Length > 0)
                 {
                     string assigneesStr = string.Join(", ", items[i].Assignees);
                     todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
@@ -38,23 +38,23 @@ public class LayoutBuilder<T> where T : TaskItem
             }
             else if (items[i].Status == "In Progress")
             {
-                if (items[i].Assignees != null && items[i].Assignees.Count > 0)
+                if (items[i].Assignees != null && items[i].Assignees.Length > 0)
                 {
                     string assigneesStr = string.Join(", ", items[i].Assignees);
-                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
+                    inProgressTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
                 }
                 else
-                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
+                    inProgressTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
             }
             else if (items[i].Status == "Done")
             {
-                if (items[i].Assignees != null && items[i].Assignees.Count > 0)
+                if (items[i].Assignees != null && items[i].Assignees.Length > 0)
                 {
                     string assigneesStr = string.Join(", ", items[i].Assignees);
-                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
+                    doneTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority} | Members: {assigneesStr}");
                 }
                 else
-                    todoTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
+                    doneTable.AddRow($"[bold]{items[i].Id}[/] | {items[i].Description} | {items[i].Priority}");
             }
         }
 
