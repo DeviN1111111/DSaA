@@ -87,7 +87,8 @@ public class ConsoleTaskView : ITaskView
             Console.WriteLine("5. Change Task Status");
             Console.WriteLine("6. Toggle Filter");
             Console.WriteLine("7. Assign Previous Task");
-            Console.WriteLine("8. Exit");
+            Console.WriteLine("8. See Workflow");
+            Console.WriteLine("9. Exit");
 
             string option = Prompt("Select an option: ");
             switch (option) {
@@ -423,6 +424,18 @@ public class ConsoleTaskView : ITaskView
 
                     break;
                 case "8":
+                    Console.WriteLine();
+                    foreach(var task in myCollection)
+                    {
+                        if (task.Previous != null )
+                        {
+
+                            Console.WriteLine($"To do Task: {task.Id} ---> Must do Task {task.Previous} first");
+                        }
+                    }
+                    Console.ReadLine();
+                    break;
+                case "9":
                     return;
                 default:
                     Console.WriteLine("Invalid option. Press any key to continue...");

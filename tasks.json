@@ -21,7 +21,7 @@
     "Assignees": [
       "Devin"
     ],
-    "Previous": null
+    "Previous": 1
   },
   {
     "Id": 3,
@@ -31,7 +31,7 @@
     "CreatedAt": "2026-04-08T22:24:27.4330827+02:00",
     "Status": "Done",
     "Assignees": [],
-    "Previous": 1
+    "Previous": 2
   },
   {
     "Id": 4,
@@ -41,6 +41,26 @@
     "CreatedAt": "2026-04-08T22:24:31.2753465+02:00",
     "Status": "To-Do",
     "Assignees": [],
+    "Previous": 5
+  },
+  {
+    "Id": 5,
+    "Description": "dasdsad",
+    "Completed": false,
+    "Priority": "Middle",
+    "CreatedAt": "2026-04-16T14:14:37.490948+02:00",
+    "Status": "To-Do",
+    "Assignees": [],
     "Previous": null
+  },
+  {
+    "Id": 6,
+    "Description": "adsdsad",
+    "Completed": true,
+    "Priority": "High",
+    "CreatedAt": "2026-04-16T14:21:01.944711+02:00",
+    "Status": "Done",
+    "Assignees": [],
+    "Previous": 1
   }
 ]
