@@ -78,6 +78,7 @@ public class ConsoleTaskView : ITaskView
 
             Console.WriteLine("\n==== ToDo List ====");
             Console.WriteLine($"Current DataType: {currentDataType}");
+            Console.WriteLine($"Current User: {currentUser}");
             Console.WriteLine("\nOptions:");
             Console.WriteLine("0. Change Datatype");
             Console.WriteLine("1. Add Task");
@@ -195,32 +196,51 @@ public class ConsoleTaskView : ITaskView
                         }
                         else
                         {
-                            TaskItem ItemToAddAssignees = myCollection.FindBy<int>(taskID, (item, Id) => item.Id == Id);
-                            if(ItemToAddAssignees == null)
+                            TaskItem item = myCollection.FindBy<int>(taskID, (x, id) => x.Id == id);
+
+                            if (item == null)
                             {
-                                System.Console.WriteLine("Doesn't exist!");
+                                Console.WriteLine("Doesn't exist!");
                                 Console.ReadKey();
                                 break;
                             }
+
                             string name = SelectUser();
-                            int index = Array.IndexOf(ItemToAddAssignees.Assignees, name);
-                            if (index != -1)
+
+                            int index = -1;
+                            for (int i = 0; i < item.Assignees.Length; i++)
                             {
-                                string[] newAssignees = new string[ItemToAddAssignees.Assignees.Length - 1];
-                                for (int i = 0; i < index; i++)
+                                if (item.Assignees[i] == name)
                                 {
-                                    newAssignees[i] = ItemToAddAssignees.Assignees[i];
+                                    index = i;
+                                    break;
                                 }
-                                for (int i = index + 1; i < ItemToAddAssignees.Assignees.Length; i++)
-                                {
-                                    newAssignees[i - 1] = ItemToAddAssignees.Assignees[i];
-                                }
-                                ItemToAddAssignees.Assignees = newAssignees;
                             }
 
-                            _service.ChangeTaskAssignees(taskID, name, false);
-                        }
+                            if (index != -1)
+                            {
+                                string[] newAssignees = new string[item.Assignees.Length - 1];
+                                int j = 0;
 
+                                for (int i = 0; i < item.Assignees.Length; i++)
+                                {
+                                    if (i != index)
+                                    {
+                                        newAssignees[j] = item.Assignees[i];
+                                        j++;
+                                    }
+                                }
+
+                                item.Assignees = newAssignees;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Assignee '{name}' not found.");
+                                Console.ReadKey();
+                            }
+
+                            _service.ChangeTaskAssignees(taskID, name, true);
+                        }
                     }
                     break;
                 case "4":  
@@ -239,10 +259,7 @@ public class ConsoleTaskView : ITaskView
                                 if (item.Assignees.Contains(currentUser) || item.Assignees.Length == 0)
                                 {
                                     _service.ChangeTaskPriority(changeIdStr, priorityChange);
-                                    TaskItem taskToChange = myCollection.FindBy<int>(
-                                        changeIdStr,
-                                        (taskItem, id) => taskItem.Id == id
-                                    );
+                                    TaskItem taskToChange = myCollection.FindBy<int>(changeIdStr, (taskItem, id) => taskItem.Id == id);
                                     taskToChange.Priority = priorityChange;
                                 }
                                 else
@@ -329,11 +346,6 @@ public class ConsoleTaskView : ITaskView
                             .Title("Choose status")
                             .AddChoices("To-Do", "In Progress", "Done"));
                         filterString = ToggleFilter2;
-                        filter = true;
-                    }
-                    else if(ToggleFilter == "Creation Date")
-                    {
-                        filterType = "Sort";
                         filter = true;
                     }
                     else if(ToggleFilter == "Off")

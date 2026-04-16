@@ -87,6 +87,7 @@ public class TaskService : ITaskService
             _repository.SaveTasks(_tasks);
         }
     }
+    
     public void ChangeTaskPrevious(int id, int? previousTaskId)
     {
         var task = _tasks.FindBy(id, (t, key) => t.Id == key);
