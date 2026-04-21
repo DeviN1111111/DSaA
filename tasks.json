@@ -2,117 +2,110 @@
   {
     "Id": 1,
     "Description": "ds",
-    "Completed": false,
+    "Completed": true,
     "Priority": "Low",
-    "CreatedAt": "2026-04-08T22:24:11.0567007+02:00",
+    "CreatedAt": "2026-04-17T11:11:27.5924009+02:00",
     "Status": "Done",
     "Assignees": [
-      "Cheng"
+      "Carlos"
     ],
-    "Previous": null
+    "Previous": []
   },
   {
     "Id": 2,
     "Description": "fd",
-    "Completed": false,
-    "Priority": "Middle",
-    "CreatedAt": "2026-04-08T22:24:15.0901795+02:00",
-    "Status": "In Progress",
+    "Completed": true,
+    "Priority": "Low",
+    "CreatedAt": "2026-04-17T11:11:32.8941458+02:00",
+    "Status": "Done",
     "Assignees": [
       "Devin"
     ],
-    "Previous": 1
+    "Previous": []
   },
   {
     "Id": 3,
     "Description": "gf",
-    "Completed": true,
+    "Completed": false,
     "Priority": "Low",
-    "CreatedAt": "2026-04-08T22:24:27.4330827+02:00",
+    "CreatedAt": "2026-04-17T11:11:35.6285913+02:00",
     "Status": "Done",
-    "Assignees": [],
-    "Previous": 2
+    "Assignees": [
+      "Cheng",
+      "Carlos"
+    ],
+    "Previous": [
+      1,
+      2
+    ]
   },
   {
     "Id": 4,
-    "Description": "gf",
-    "Completed": false,
+    "Description": "ds",
+    "Completed": true,
     "Priority": "Low",
-    "CreatedAt": "2026-04-08T22:24:31.2753465+02:00",
-    "Status": "In Progress",
+    "CreatedAt": "2026-04-17T11:25:52.0118197+02:00",
+    "Status": "Done",
     "Assignees": [],
-    "Previous": 5
+    "Previous": []
   },
   {
     "Id": 5,
-    "Description": "dasdsad",
-    "Completed": false,
-    "Priority": "Middle",
-    "CreatedAt": "2026-04-16T14:14:37.490948+02:00",
-    "Status": "To-Do",
+    "Description": "ds",
+    "Completed": true,
+    "Priority": "Low",
+    "CreatedAt": "2026-04-17T11:25:54.7591569+02:00",
+    "Status": "Done",
     "Assignees": [],
-    "Previous": null
+    "Previous": []
   },
   {
     "Id": 6,
-    "Description": "adsdsad",
+    "Description": "ds",
     "Completed": true,
-    "Priority": "High",
-    "CreatedAt": "2026-04-16T14:21:01.944711+02:00",
+    "Priority": "Low",
+    "CreatedAt": "2026-04-17T11:25:56.9132466+02:00",
     "Status": "Done",
     "Assignees": [],
-    "Previous": 1
+    "Previous": []
   },
   {
     "Id": 7,
-    "Description": "sa",
-    "Completed": true,
-    "Priority": "Middle",
-    "CreatedAt": "2026-04-16T14:42:00.532888+02:00",
-    "Status": "Done",
-    "Assignees": [],
-    "Previous": null
-  },
-  {
-    "Id": 8,
-    "Description": "dasdsada",
+    "Description": "ds",
     "Completed": false,
     "Priority": "Low",
-    "CreatedAt": "2026-04-16T15:20:35.898583+02:00",
+    "CreatedAt": "2026-04-17T11:35:20.1101878+02:00",
     "Status": "To-Do",
     "Assignees": [
       "Cheng"
     ],
-    "Previous": null
+    "Previous": []
+  },
+  {
+    "Id": 8,
+    "Description": "ds",
+    "Completed": false,
+    "Priority": "Low",
+    "CreatedAt": "2026-04-17T11:35:23.2017594+02:00",
+    "Status": "To-Do",
+    "Assignees": [],
+    "Previous": []
   },
   {
     "Id": 9,
-    "Description": "dasdasd",
+    "Description": "ds",
     "Completed": false,
     "Priority": "Low",
-    "CreatedAt": "2026-04-16T15:24:02.208975+02:00",
+    "CreatedAt": "2026-04-17T11:35:25.1532456+02:00",
     "Status": "To-Do",
-    "Assignees": [],
-    "Previous": null
-  },
-  {
-    "Id": 10,
-    "Description": "dasdasd",
-    "Completed": false,
-    "Priority": "Low",
-    "CreatedAt": "2026-04-16T15:27:44.517188+02:00",
-    "Status": "To-Do",
-    "Assignees": [],
-    "Previous": null
-  },
-  {
-    "Id": 11,
-    "Description": "dasdsa",
-    "Completed": false,
-    "Priority": "Low",
-    "CreatedAt": "2026-04-16T15:32:38.553763+02:00",
-    "Status": "To-Do",
-    "Assignees": [],
-    "Previous": null
+    "Assignees": [
+      "Cheng",
+      "Devin",
+      "Carlos"
+    ],
+    "Previous": [
+      7,
+      8
+    ]
   }
 ]

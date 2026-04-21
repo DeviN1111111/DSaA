@@ -184,15 +184,23 @@ public class ConsoleTaskView : ITaskView
                                 break;
                             }
                             string name = SelectUser();
-                            string[] newAssignees = new string[ItemToAddAssignees.Assignees.Length + 1];
-                            for (int i = 0; i < ItemToAddAssignees.Assignees.Length; i++)
-                            {
-                                newAssignees[i] = ItemToAddAssignees.Assignees[i];
-                            }
-                            newAssignees[ItemToAddAssignees.Assignees.Length] = name;
-                            ItemToAddAssignees.Assignees = newAssignees;
+                            bool HasSameAssignee = ItemToAddAssignees.Assignees.Contains(name);
 
-                            _service.ChangeTaskAssignees(taskID, name, true);
+                            if (!HasSameAssignee)
+                            {
+                                string[] newAssignees = new string[ItemToAddAssignees.Assignees.Length + 1];
+                                for (int i = 0; i < ItemToAddAssignees.Assignees.Length; i++)
+                                {
+                                    newAssignees[i] = ItemToAddAssignees.Assignees[i];
+                                }
+                                newAssignees[ItemToAddAssignees.Assignees.Length] = name;
+                                ItemToAddAssignees.Assignees = newAssignees;
+
+                                _service.ChangeTaskAssignees(taskID, name, true);
+                            }
+
+                            if (HasSameAssignee) System.Console.WriteLine("Member already assigned");
+                            Console.ReadLine();
                         }
                         else
                         {
@@ -303,11 +311,12 @@ public class ConsoleTaskView : ITaskView
                         }
 
                         TaskItem taskToStatusChange = myCollection.FindBy<int>(changeidStr, (taskItem, id) => taskItem.Id == id);
-                        var prevTask = _service.GetAllTasks().FirstOrDefault(t => t.Id == task.Previous);
+                        var prevTasks = _service.GetAllTasks().Where(t => taskToStatusChange.Previous.Contains(t.Id)).OrderBy(t => t.Id).ToArray();
+                        bool hasIncompletePreviousTask = prevTasks.Any(t => t != null && !t.Completed);
 
                         if (changeTaskStatus == "Done")
                         {
-                            if (prevTask != null && !prevTask.Completed)
+                            if (hasIncompletePreviousTask)
                             {
                                 Console.WriteLine("You cannot mark this task as Done until the previous task is completed.");
                                 Console.ReadKey();
@@ -316,6 +325,7 @@ public class ConsoleTaskView : ITaskView
 
                             _service.ToggleTaskCompletion(changeidStr);
                         }
+
                         _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
                         taskToStatusChange.Status = changeTaskStatus;
                     }
@@ -420,7 +430,6 @@ public class ConsoleTaskView : ITaskView
                         }
 
                         _service.ChangeTaskPrevious(currentTaskId, previousTaskId);
-                        selectedTask.Previous = previousTaskId;
 
                         Console.WriteLine("Dependency task assigned.");
                         Console.ReadKey();
@@ -428,7 +437,7 @@ public class ConsoleTaskView : ITaskView
                     else
                     {
                         _service.ChangeTaskPrevious(currentTaskId, null);
-                        selectedTask.Previous = null;
+            
 
                         Console.WriteLine("Dependency task removed.");
                         Console.ReadKey();
@@ -437,12 +446,25 @@ public class ConsoleTaskView : ITaskView
                     break;
                 case "8":
                     Console.WriteLine();
-                    foreach(var task in myCollection)
+                    System.Console.WriteLine("=== Dependencies ===");
+                    System.Console.WriteLine();
+                    foreach(var task in myCollection) 
                     {
-                        if (task.Previous != null )
+                        if (task.Previous != null && task.Previous.Length > 0)
                         {
-
-                            Console.WriteLine($"To do Task: {task.Id} ---> Must do Task {task.Previous} first");
+                            var prevString = String.Join(", ", task.Previous);
+                            Console.WriteLine($"To do Task: {task.Id} ---> Must do Task {prevString} first");
+                        }
+                    }
+                    System.Console.WriteLine();
+                    System.Console.WriteLine("=== Assignees ===");
+                    System.Console.WriteLine();
+                    foreach (var task in myCollection)
+                    { 
+                        if (task.Assignees != null)
+                        {
+                            var assignString = String.Join(", ", task.Assignees);
+                            System.Console.WriteLine($"Assigned member for task {task.Id}: {assignString}");
                         }
                     }
                     Console.ReadLine();
