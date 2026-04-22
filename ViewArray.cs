@@ -152,20 +152,24 @@ public class ConsoleTaskView : ITaskView
                     string removeIdStr = Prompt("Enter task id to remove: ");
                     if (int.TryParse(removeIdStr, out int removeId)) 
                     {
-                        _service.RemoveTask(removeId);
-                    }
-
-                    TaskItem ItemToRemove = myCollection.FindBy<int>(removeId, (item, Id) => item.Id == Id);
-                    
-                    if(ItemToRemove != default)
-                    {
-                        myCollection.Remove(ItemToRemove);
-                        _service.RemoveTask(removeId);
-                        System.Console.WriteLine($"ID: {removeId} has been deleted");
+                        TaskItem ItemToRemove = myCollection.FindBy<int>(removeId, (item, Id) => item.Id == Id);
+                        
+                        if(ItemToRemove != default)
+                        {
+                            myCollection.Remove(ItemToRemove);
+                            _service.RemoveTask(removeId);
+                            System.Console.WriteLine($"ID: {removeId} has been deleted");
+                        }
+                        else
+                        {
+                            System.Console.WriteLine("No task with given ID");
+                        }
                     }
                     else
-                        System.Console.WriteLine("No task with given ID");;
-                        Console.ReadKey();
+                    {
+                        System.Console.WriteLine("Invalid ID format");
+                    }
+                    Console.ReadKey();
                     break;
                 case "3":
                     string choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
