@@ -206,7 +206,7 @@ public class ConsoleTaskView : ITaskView
                                     newAssignees[i] = ItemToAddAssignees.Assignees[i];
                                 }
                                 newAssignees[ItemToAddAssignees.Assignees.Length] = name;
-                                //ItemToAddAssignees.Assignees = newAssignees;
+                                ItemToAddAssignees.Assignees = newAssignees;
 
                                 _service.ChangeTaskAssignees(taskID, name, true);
                             }
@@ -314,14 +314,6 @@ public class ConsoleTaskView : ITaskView
                     if (int.TryParse(Console.ReadLine(), out int changeidStr))
                     {
                         TaskItem task = myCollection.FindBy<int>(changeidStr, (x, id) => x.Id == id);
-                        // TaskItem task = null!;
-                        // foreach(var item in myCollection)
-                        // {
-                        //     if (item.Id == changeidStr)
-                        //     {
-                        //         task = item;
-                        //     }
-                        // }
                         if (task == default)
                         {
                             Console.WriteLine("Task not found.");
