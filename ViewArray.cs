@@ -131,7 +131,7 @@ public class ConsoleTaskView : ITaskView
                         .Title("Choose your priority")
                         .AddChoices("Low", "Middle", "High"));
 
-                    var arr = _service.GetAllTasks().ToArray();
+                    var arr = myCollection.ToArray();
                     int newId = 1;
 
                     for (int i = 0; i < arr.Length; i++)
@@ -268,7 +268,7 @@ public class ConsoleTaskView : ITaskView
                     System.Console.WriteLine("Enter ID to change: ");
                     if (int.TryParse(Console.ReadLine(), out int changeIdStr))
                     {
-                        var array = _service.GetAllTasks().ToArray();
+                        var array = myCollection;
                         foreach(var item in array)
                         {
                             if (item.Id == changeIdStr)
@@ -303,8 +303,14 @@ public class ConsoleTaskView : ITaskView
 
                     if (int.TryParse(Console.ReadLine(), out int changeidStr))
                     {
-                        var task = _service.GetAllTasks().FirstOrDefault(t => t.Id == changeidStr);
-
+                        TaskItem task = null!;
+                        foreach(var item in myCollection)
+                        {
+                            if (item.Id == changeidStr)
+                            {
+                                task = item;
+                            }
+                        }
                         if (task == null)
                         {
                             Console.WriteLine("Task not found.");
@@ -328,7 +334,7 @@ public class ConsoleTaskView : ITaskView
                         }
 
                         TaskItem taskToStatusChange = myCollection.FindBy<int>(changeidStr, (taskItem, id) => taskItem.Id == id);
-                        
+
                         var prevTasks = task.Previous.Select(prevId => _service.GetAllTasks().FirstOrDefault(t => t.Id == prevId)).ToArray();
                         bool hasIncompletePreviousTask = prevTasks.Any(t => t != null && !t.Completed);
 
@@ -395,7 +401,7 @@ public class ConsoleTaskView : ITaskView
                         break;
                     }
 
-                    var allTasks = _service.GetAllTasks().ToArray();
+                    var allTasks = myCollection;
                     TaskItem? selectedTask = null;
                     bool previousTaskExists = false;
 
@@ -489,8 +495,8 @@ public class ConsoleTaskView : ITaskView
                     Console.ReadLine();
                     break;
                 case "9":
-                    JsonTaskRepository JsonTaskRepository = new JsonTaskRepository("tasks.json");
-                    JsonTaskRepository.SaveTasks(myCollection);
+                    // JsonTaskRepository JsonTaskRepository = new JsonTaskRepository("tasks.json");
+                    // JsonTaskRepository.SaveTasks(myCollection);
                     return;
                 default:
                     Console.WriteLine("Invalid option. Press any key to continue...");
