@@ -26,7 +26,7 @@ public class ConsoleTaskView : ITaskView
     string Prompt(string prompt) 
     {
         Console.Write(prompt);
-        return Console.ReadLine();
+        return Console.ReadLine()!;
     }
 
     string SelectUser()
@@ -250,14 +250,13 @@ public class ConsoleTaskView : ITaskView
                                 }
 
                                 item.Assignees = newAssignees;
+                                _service.ChangeTaskAssignees(taskID, name, false);
                             }
                             else
                             {
                                 Console.WriteLine($"Assignee '{name}' not found.");
                                 Console.ReadKey();
                             }
-
-                            _service.ChangeTaskAssignees(taskID, name, false);
                         }
                     }
                     break;
@@ -305,15 +304,16 @@ public class ConsoleTaskView : ITaskView
 
                     if (int.TryParse(Console.ReadLine(), out int changeidStr))
                     {
-                        TaskItem task = null!;
-                        foreach(var item in myCollection)
-                        {
-                            if (item.Id == changeidStr)
-                            {
-                                task = item;
-                            }
-                        }
-                        if (task == null)
+                        TaskItem task = myCollection.FindBy<int>(changeidStr, (x, id) => x.Id == id);
+                        // TaskItem task = null!;
+                        // foreach(var item in myCollection)
+                        // {
+                        //     if (item.Id == changeidStr)
+                        //     {
+                        //         task = item;
+                        //     }
+                        // }
+                        if (task == default)
                         {
                             Console.WriteLine("Task not found.");
                             Console.ReadKey();

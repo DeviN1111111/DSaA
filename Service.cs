@@ -16,7 +16,7 @@ public interface ITaskService
 public class TaskService : ITaskService 
 {
     private readonly ITaskRepository _repository;
-    private readonly MyArray<TaskItem> _tasks;
+    private readonly IMyCollection<TaskItem> _tasks;
 
     public TaskService(ITaskRepository repository) 
     {
@@ -24,7 +24,7 @@ public class TaskService : ITaskService
         _tasks = _repository.LoadTasks();
     }
 
-    public IEnumerable<TaskItem> GetAllTasks() => _tasks;
+    public IEnumerable<TaskItem> GetAllTasks() => _tasks.ToArray();
 
     public void AddTask(string description) 
     {
