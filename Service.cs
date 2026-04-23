@@ -126,7 +126,7 @@ public class TaskService : ITaskService
                     break;
                 }
             }
-
+ 
             if (!exists)
             {
                 int[] newPrevious = new int[task.Previous.Length + 1];
