@@ -337,13 +337,13 @@ public class ConsoleTaskView : ITaskView
                         }
 
                         TaskItem taskToStatusChange = myCollection.FindBy<int>(changeidStr, (taskItem, id) => taskItem.Id == id);
-                        var tasksToCompare = myCollection;
                         MyArray<int> prevTasks = [];
-                        bool hasIncompletePreviousTask = false;
+                        var tasksCollection = _service.GetAllTasks();
+
                         
                         foreach (var t in task.Previous)
                         {
-                            foreach (var t2 in tasksToCompare)
+                            foreach (var t2 in tasksCollection)
                             {
                                 if (t == t2.Id)
                                 {
@@ -354,10 +354,10 @@ public class ConsoleTaskView : ITaskView
 
                         if (changeTaskStatus == "Done")
                         {
-                            
+                            bool hasIncompletePreviousTask = false;
                             foreach (var t in prevTasks)
                             {
-                                foreach (var t2 in tasksToCompare)
+                                foreach (var t2 in tasksCollection)
                                 {
                                     if (t == t2.Id)
                                     {
