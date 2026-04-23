@@ -107,22 +107,35 @@ public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T> where T : ICompa
         return default!;
     }
 
+
     public void Sort(Comparison<T> comparison)
     {
-        Node<T>? current = _head;
+        if (_head == null)
+            return;
 
-        while(current!.Next != null)
+        bool swapped;
+
+        do
         {
-            if (comparison(current!.Value, current.Next!.Value) > 0)
-            {
-                T temp = current.Value;
-                current.Next.Value = current.Value;
-                current.Value = temp;
-            }
-            current = current.Next;
-        }
-    }
+            swapped = false;
+            Node<T>? current = _head;
 
+            while (current != null && current.Next != null)
+            {
+                if (comparison(current.Value, current.Next.Value) > 0)
+                {
+                    T temp = current.Value;
+                    current.Value = current.Next.Value;
+                    current.Next.Value = temp;
+
+                    swapped = true;
+                }
+
+                current = current.Next;
+            }
+
+        } while (swapped);
+    }
     public IMyCollection<T> Filter(Func<T, bool> predicate)
     {
         MyLinkedList<T> result = new MyLinkedList<T>();
@@ -143,13 +156,13 @@ public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T> where T : ICompa
     
     public R Reduce<R>(Func<T, R, R> accumulator)
     {
-        R result = default(R)!;
-        Node<T> current = _head!;
+        R result = default!;
+        Node<T>? current = _head;
 
-        while(current != null)
+        while (current != null)
         {
-            accumulator(current.Value, result);
-            current = current.Next!;
+            result = accumulator(current.Value, result);
+            current = current.Next;
         }
 
         return result;

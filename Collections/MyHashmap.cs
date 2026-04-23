@@ -1,4 +1,4 @@
-class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
+public class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
 {
     private Entry<Tkey, TValue>?[] buckets;
     private int Capacity;
@@ -46,7 +46,7 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
     public void Add(TValue item)
     {
         if(keySelector == null)
-            throw new InvalidOperationException("keySelector must be set to add items");
+            return; 
 
         if(count >= Capacity / 1.25) // Load factor of 80% (Blijkbaar is dit sneller dan 100% load factor)
         {
@@ -85,7 +85,7 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
     public void Remove(TValue item)
     {
         if(keySelector == null)
-            throw new InvalidOperationException("keySelector must be set to remove items");
+            return;
 
         Tkey key = keySelector(item);
         int index = GetIndex(key);
@@ -150,18 +150,7 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
 
     public TValue[] ToArray()
     {
-        int totalEntries = 0;
-        for(int i = 0; i < buckets.Length; i++)
-        {
-            var current = buckets[i];
-            while(current != null)
-            {
-                totalEntries++;
-                current = current.Next;
-            }
-        }
-
-        TValue[] result = new TValue[totalEntries];
+        TValue[] result = new TValue[count];
         int index = 0;
         for(int i = 0; i < buckets.Length; i++)
         {
@@ -234,7 +223,10 @@ class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
     }
     public IEnumerator<TValue> GetEnumerator()
     {
-        return ((IEnumerable<TValue>)ToArray()).GetEnumerator();
+        var items = ToArray();
+
+        for (int i = 0; i < items.Length; i++)
+            yield return items[i];
     }
     public IMyIterator<TValue> GetIterator()
     {
