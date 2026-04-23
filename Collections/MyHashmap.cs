@@ -70,12 +70,12 @@ public class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
         {
             if(current.Key != null && current.Key.Equals(key))
             {
-                current.Value = item; // Update the value if the key already exists
+                current.Value = item;
                 return;
             }
             if(current.Next == null)
             {
-                current.Next = entry; // Add the new entry at the end of the node chain
+                current.Next = entry;
                 count++;
                 return;
             }
@@ -167,7 +167,10 @@ public class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
     public IMyCollection<TValue> Filter(Func<TValue, bool> predicate)
     {
         if(keySelector == null)
-            throw new InvalidOperationException("keySelector must be set to filter items");
+        {
+            Console.WriteLine("keySelector must be set to filter items");
+            return default!;
+        }
 
         var filteredMap = new MyHashMap<Tkey, TValue>(keySelector);
 

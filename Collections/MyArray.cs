@@ -24,7 +24,11 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T> where T : IComparable
     //public toArray maken 
     public T[] ToArray()
     {
-        T[] result = CloneData(_items);
+        T[] result = new T[_count];
+        for (int i = 0; i < _count; i++)
+        {
+            result[i] = _items[i];
+        }
         return result;
     }
 

@@ -2,8 +2,8 @@ using System.Text.Json;
 
 public interface ITaskRepository
 {
-    MyArray<TaskItem> LoadTasks();
-    void SaveTasks(MyArray<TaskItem> tasks);
+    IMyCollection<TaskItem> LoadTasks();
+    void SaveTasks(IMyCollection<TaskItem> tasks);
 }
 
 public class JsonTaskRepository : ITaskRepository
@@ -12,7 +12,7 @@ public class JsonTaskRepository : ITaskRepository
 
     public JsonTaskRepository(string filePath) => _filePath = filePath;
 
-    public MyArray<TaskItem> LoadTasks()
+    public IMyCollection<TaskItem> LoadTasks()
     {
         if (!File.Exists(_filePath))
         {
@@ -24,7 +24,7 @@ public class JsonTaskRepository : ITaskRepository
         return tasks is null ? new MyArray<TaskItem>() : new MyArray<TaskItem>(tasks);
     }
 
-    public void SaveTasks(MyArray<TaskItem> tasks)
+    public void SaveTasks(IMyCollection<TaskItem> tasks)
     {
         string json = JsonSerializer.Serialize(tasks.ToArray(), new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_filePath, json);

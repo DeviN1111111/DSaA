@@ -1,5 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
-
 public class TaskItem : IComparable<TaskItem>
 {
     public int Id { get; set; }
@@ -9,15 +7,11 @@ public class TaskItem : IComparable<TaskItem>
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public string Status { get; set; } = "To-Do";
     public string[] Assignees { get; set; } = Array.Empty<string>();
+    public int[] Previous { get; set; } = Array.Empty<int>();
 
     public int CompareTo(TaskItem other)
     {
         if (other == null) return 1;
         return Id.CompareTo(other.Id);
-    }
-
-    public override string ToString()
-    {
-        return $"[{Id}] {Description} - {(Completed ? "✓" : "✗")}";
     }
 }
