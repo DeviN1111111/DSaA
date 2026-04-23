@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spectre.Console;
 
 interface ITaskView
@@ -39,6 +40,7 @@ public class ConsoleTaskView : ITaskView
 
     public void Run() 
     {
+        Console.Clear();
         IMyCollection<TaskItem> myCollection = new MyArray<TaskItem>();
         foreach (var task in _service.GetAllTasks())
         {
@@ -214,7 +216,6 @@ public class ConsoleTaskView : ITaskView
                         else
                         {
                             TaskItem item = myCollection.FindBy<int>(taskID, (x, id) => x.Id == id);
-
                             if (item == null)
                             {
                                 Console.WriteLine("Doesn't exist!");
@@ -256,7 +257,7 @@ public class ConsoleTaskView : ITaskView
                                 Console.ReadKey();
                             }
 
-                            _service.ChangeTaskAssignees(taskID, name, true);
+                            _service.ChangeTaskAssignees(taskID, name, false);
                         }
                     }
                     break;
@@ -269,6 +270,7 @@ public class ConsoleTaskView : ITaskView
                     if (int.TryParse(Console.ReadLine(), out int changeIdStr))
                     {
                         var array = myCollection;
+                        
                         foreach(var item in array)
                         {
                             if (item.Id == changeIdStr)
@@ -334,7 +336,7 @@ public class ConsoleTaskView : ITaskView
                         }
 
                         TaskItem taskToStatusChange = myCollection.FindBy<int>(changeidStr, (taskItem, id) => taskItem.Id == id);
-                        var tasksToCompare = _service.GetAllTasks();
+                        var tasksToCompare = myCollection;
                         MyArray<int> prevTasks = [];
 
                         foreach (var t in task.Previous)
@@ -409,7 +411,6 @@ public class ConsoleTaskView : ITaskView
                     string previousChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Add or Remove Previous Task")
                         .AddChoices("Add", "Remove"));
-
 
                     string currentTaskIdStr = Prompt("Enter task id to assign task dependency: ");
                     if (!int.TryParse(currentTaskIdStr, out int currentTaskId))

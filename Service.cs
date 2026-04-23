@@ -94,6 +94,20 @@ public class TaskService : ITaskService
             task.Assignees = newAssignees;
             _repository.SaveTasks(_tasks);
         }
+        else if (task != null && add == false)
+        {
+            string[] newAssignees = new string[task.Assignees.Length - 1];
+            int index = 0;
+            for (int i = 0; i < task.Assignees.Length; i++)
+            {
+                if (task.Assignees[i] != name)
+                {
+                    newAssignees[index++] = task.Assignees[i];
+                }
+            }
+            task.Assignees = newAssignees;
+            _repository.SaveTasks(_tasks);
+        }
     }
     
     public void ChangeTaskPrevious(int id, int? previousTaskId)
