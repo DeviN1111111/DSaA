@@ -120,7 +120,7 @@ public class MyHashMap<Tkey, TValue> : IMyCollection<TValue>
             var current = buckets[i];
             while(current != null)
             {
-                var next = current.Next; // Store the next entry before rehashing 
+                var next = current.Next;
                 int newIndex = current.Key != null ? Math.Abs(current.Key.GetHashCode()) % newCapacity : 0; 
 
                 current.Next = newBuckets[newIndex];

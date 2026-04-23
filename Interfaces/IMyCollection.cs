@@ -1,14 +1,14 @@
 public interface IMyCollection<T>
 {
-    void Add(T item); // CHECK
-    void Remove(T item);  // CHECK
-    T FindBy<K>(K key, Func<T, K, bool> comparer);   // CHECK
+    void Add(T item);
+    void Remove(T item);
+    T FindBy<K>(K key, Func<T, K, bool> comparer);
     IMyCollection<T> Filter(Func<T, bool> predicate);
     void Sort(Comparison<T> comparison);
-    int Count { get; } // CHECK
-    bool Dirty {get; set;} // MOET NOG NIET //CHECK
+    int Count { get; }
+    bool Dirty {get; set;}
     R Reduce<R>(Func<T, R, R> accumulator);
     IMyIterator<T> GetIterator();
-    IEnumerator<T> GetEnumerator(); // CHECK
+    IEnumerator<T> GetEnumerator();
     T[] ToArray();
 }
