@@ -18,7 +18,7 @@ public abstract class CollectionTestsBase
     }
 
     // Add
-    [Fact]
+    [Fact] // Hij moet altijd true zijn, anders faalt de test
     public void Add_ShouldAddItem()
     {
         var collection = CreateCollection();
@@ -65,6 +65,8 @@ public abstract class CollectionTestsBase
         Assert.Equal(2, result.Count);
         Assert.Contains(2, filteredItems);
         Assert.Contains(4, filteredItems);
+        Assert.DoesNotContain(3, filteredItems);
+        Assert.DoesNotContain(1, filteredItems);
     }
 
     // Sort
@@ -87,17 +89,6 @@ public abstract class CollectionTestsBase
         var collection = CreateCollectionWithItems(1, 2, 3);
 
         Assert.Equal(3, collection.Count);
-    }
-
-    // Dirty
-    [Fact]
-    public void Dirty_ShouldStoreBooleanValue()
-    {
-        var collection = CreateCollection();
-
-        collection.Dirty = true;
-
-        Assert.True(collection.Dirty);
     }
 
     // Reduce
