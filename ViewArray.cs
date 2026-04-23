@@ -328,12 +328,30 @@ public class ConsoleTaskView : ITaskView
                         }
 
                         TaskItem taskToStatusChange = myCollection.FindBy<int>(changeidStr, (taskItem, id) => taskItem.Id == id);
-                        
-                        var prevTasks = task.Previous.Select(prevId => _service.GetAllTasks().FirstOrDefault(t => t.Id == prevId)).ToArray();
-                        bool hasIncompletePreviousTask = prevTasks.Any(t => t != null && !t.Completed);
+                        var tasksToCompare = _service.GetAllTasks();
+                        MyArray<int> prevTasks = [];
+
+                        foreach (var t in task.Previous)
+                        {
+                            foreach (var t2 in tasksToCompare)
+                            {
+                                if (t == t2.Id)
+                                {
+                                    prevTasks.Add(t);
+                                }
+                            }
+                        }
 
                         if (changeTaskStatus == "Done")
                         {
+                            bool hasIncompletePreviousTask = false;
+                            foreach (var t in prevTasks)
+                            {
+                                foreach (var t2 in tasksToCompare)
+                                {
+                                    if (t2 != null && !t2.Completed) hasIncompletePreviousTask = true;
+                                }
+                            }
                             if (hasIncompletePreviousTask)
                             {
                                 Console.WriteLine("You cannot mark this task as Done until the previous task is completed.");
