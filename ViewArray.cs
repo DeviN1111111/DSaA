@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Spectre.Console;
 
 interface ITaskView
@@ -25,7 +26,7 @@ public class ConsoleTaskView : ITaskView
     string Prompt(string prompt) 
     {
         Console.Write(prompt);
-        return Console.ReadLine();
+        return Console.ReadLine()!;
     }
 
     string SelectUser()
@@ -39,6 +40,7 @@ public class ConsoleTaskView : ITaskView
 
     public void Run() 
     {
+        Console.Clear();
         IMyCollection<TaskItem> myCollection = new MyArray<TaskItem>();
         foreach (var task in _service.GetAllTasks())
         {
@@ -215,7 +217,6 @@ public class ConsoleTaskView : ITaskView
                         else
                         {
                             TaskItem item = myCollection.FindBy<int>(taskID, (x, id) => x.Id == id);
-
                             if (item == null)
                             {
                                 Console.WriteLine("Doesn't exist!");
@@ -250,14 +251,13 @@ public class ConsoleTaskView : ITaskView
                                 }
 
                                 item.Assignees = newAssignees;
+                                _service.ChangeTaskAssignees(taskID, name, false);
                             }
                             else
                             {
                                 Console.WriteLine($"Assignee '{name}' not found.");
                                 Console.ReadKey();
                             }
-
-                            _service.ChangeTaskAssignees(taskID, name, true);
                         }
                     }
                     break;
@@ -270,6 +270,7 @@ public class ConsoleTaskView : ITaskView
                     if (int.TryParse(Console.ReadLine(), out int changeIdStr))
                     {
                         var array = myCollection;
+                        
                         foreach(var item in array)
                         {
                             if (item.Id == changeIdStr)
@@ -312,15 +313,16 @@ public class ConsoleTaskView : ITaskView
                     
                     if (int.TryParse(Console.ReadLine(), out int changeidStr))
                     {
-                        TaskItem task = null!;
-                        foreach(var item in myCollection)
-                        {
-                            if (item.Id == changeidStr)
-                            {
-                                task = item;
-                            }
-                        }
-                        if (task == null)
+                        TaskItem task = myCollection.FindBy<int>(changeidStr, (x, id) => x.Id == id);
+                        // TaskItem task = null!;
+                        // foreach(var item in myCollection)
+                        // {
+                        //     if (item.Id == changeidStr)
+                        //     {
+                        //         task = item;
+                        //     }
+                        // }
+                        if (task == default)
                         {
                             Console.WriteLine("Task not found.");
                             Console.ReadKey();
@@ -425,7 +427,6 @@ public class ConsoleTaskView : ITaskView
                     string previousChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Add or Remove Previous Task")
                         .AddChoices("Add", "Remove All"));
-
 
                     string currentTaskIdStr = Prompt("Enter task id to assign task dependency: ");
                     if (!int.TryParse(currentTaskIdStr, out int currentTaskId))
