@@ -428,7 +428,7 @@ public class ConsoleTaskView : ITaskView
                         .Title("Add or Remove Previous Task")
                         .AddChoices("Add", "Remove All"));
 
-                    string currentTaskIdStr = Prompt("Enter task id to assign task dependency: ");
+                    string currentTaskIdStr = Prompt("Enter task id to assign/remove task dependency: ");
                     if (!int.TryParse(currentTaskIdStr, out int currentTaskId))
                     {
                         Console.WriteLine("Please fill in a valid task ID");
@@ -437,17 +437,16 @@ public class ConsoleTaskView : ITaskView
                     }
 
                     var allTasks = myCollection;
-                    TaskItem? selectedTask = null;
-                    bool previousTaskExists = false;
+                    TaskItem? selectedTask = myCollection.FindBy<int>(currentTaskId, (taskItem, id) => taskItem.Id == id);
 
-                    foreach (var item in allTasks)
-                    {
-                        if (item.Id == currentTaskId)
-                        {
-                            selectedTask = myCollection.FindBy<int>(currentTaskId, (taskItem, id) => taskItem.Id == id);
-                            break;
-                        }
-                    }
+                    // foreach (var item in allTasks)
+                    // {
+                    //     if (item.Id == currentTaskId)
+                    //     {
+                    //         selectedTask = myCollection.FindBy<int>(currentTaskId, (taskItem, id) => taskItem.Id == id);
+                    //         break;
+                    //     }
+                    // }
 
                     if (selectedTask == null)
                     {
@@ -473,6 +472,7 @@ public class ConsoleTaskView : ITaskView
                             break;
                         }
 
+                        bool previousTaskExists = false;
                         foreach (var item in allTasks)
                         {
                             if (item.Id == previousTaskId)
@@ -488,6 +488,24 @@ public class ConsoleTaskView : ITaskView
                             Console.ReadKey();
                             break;
                         }
+
+                        bool alreadyAssigned = false;
+                        foreach (var prev in selectedTask.Previous)
+                        {
+                            if (prev == previousTaskId)
+                            {
+                                alreadyAssigned = true;
+                                break;
+                            }
+                        }
+
+                        if (alreadyAssigned)
+                        {
+                            Console.WriteLine("Dependency already assigned.");
+                            Console.ReadKey();
+                            break;
+                        }
+
                         int[] newPrevious = new int[selectedTask.Previous.Length + 1];
 
                         for (int i = 0; i < selectedTask.Previous.Length; i++)
@@ -497,13 +515,14 @@ public class ConsoleTaskView : ITaskView
 
                         newPrevious[newPrevious.Length - 1] = previousTaskId;
                         selectedTask.Previous = newPrevious;
+                        _service.ChangeTaskPrevious(currentTaskId, previousTaskId);
 
                         Console.WriteLine("Dependency task assigned.");
                         Console.ReadKey();
                     }
                     else
                     {
-                        selectedTask.Previous = new int[0];
+                        selectedTask.Previous = Array.Empty<int>();;
                         _service.ChangeTaskPrevious(currentTaskId, null);   
                         Console.WriteLine("Dependency task removed.");
                         Console.ReadKey();
