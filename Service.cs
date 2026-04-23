@@ -102,17 +102,36 @@ public class TaskService : ITaskService
 
         if (task != null && previousTaskId.HasValue)
         {
-            if (!task.Previous.Contains(previousTaskId.Value))
+            bool exists = false;
+
+            for (int i = 0; i < task.Previous.Length; i++)
+            {
+                if (task.Previous[i] == previousTaskId.Value)
+                {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists)
             {
                 int[] newPrevious = new int[task.Previous.Length + 1];
+
                 for (int i = 0; i < task.Previous.Length; i++)
                 {
                     newPrevious[i] = task.Previous[i];
                 }
+
                 newPrevious[newPrevious.Length - 1] = previousTaskId.Value;
                 task.Previous = newPrevious;
+
                 _repository.SaveTasks(_tasks);
             }
+        }
+        else if (task != null && !previousTaskId.HasValue)
+        {
+            task.Previous = new int[0];
+            _repository.SaveTasks(_tasks);
         }
     }
 }

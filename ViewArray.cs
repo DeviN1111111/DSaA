@@ -173,6 +173,7 @@ public class ConsoleTaskView : ITaskView
                         .Title("Add or Remove")
                         .AddChoices("Add", "Remove"));
                     string taskId = Prompt("Enter task id to add or remove assignees: ");
+
                     if (int.TryParse(taskId, out int taskID)) 
                     {
                         if(choice == "Add")
@@ -203,7 +204,7 @@ public class ConsoleTaskView : ITaskView
                                     newAssignees[i] = ItemToAddAssignees.Assignees[i];
                                 }
                                 newAssignees[ItemToAddAssignees.Assignees.Length] = name;
-                                ItemToAddAssignees.Assignees = newAssignees;
+                                //ItemToAddAssignees.Assignees = newAssignees;
 
                                 _service.ChangeTaskAssignees(taskID, name, true);
                             }
@@ -273,7 +274,15 @@ public class ConsoleTaskView : ITaskView
                         {
                             if (item.Id == changeIdStr)
                             {
-                                if (item.Assignees.Contains(currentUser) || item.Assignees.Length == 0)
+                                bool HasSameAssignee3 = false;
+                                foreach(var assignee in item.Assignees)
+                                {
+                                    if(assignee == currentUser)
+                                    {
+                                        HasSameAssignee3 = true;
+                                    }
+                                }
+                                if (HasSameAssignee3 || item.Assignees.Length == 0)
                                 {
                                     _service.ChangeTaskPriority(changeIdStr, priorityChange);
                                     TaskItem taskToChange = myCollection.FindBy<int>(changeIdStr, (taskItem, id) => taskItem.Id == id);
@@ -300,7 +309,7 @@ public class ConsoleTaskView : ITaskView
                         .AddChoices("To-Do", "In Progress", "Done"));
 
                     Console.WriteLine("Enter ID to change: ");
-
+                    
                     if (int.TryParse(Console.ReadLine(), out int changeidStr))
                     {
                         TaskItem task = null!;
@@ -318,15 +327,15 @@ public class ConsoleTaskView : ITaskView
                             break;
                         }
 
-                        bool HasSameAssignee = false;
+                        bool HasSameAssignee2 = false;
                         foreach(var assignee in task.Assignees)
                         {
                             if(currentUser == assignee)
                             {
-                                HasSameAssignee = true ;
+                                HasSameAssignee2 = true ;
                             }
                         }
-                        if (task.Assignees.Length != 0 && !HasSameAssignee)
+                        if (task.Assignees.Length != 0 && !HasSameAssignee2)
                         {
                             Console.WriteLine("Access denied. You are not logged in as the assigned user.");
                             Console.ReadKey();
@@ -334,9 +343,10 @@ public class ConsoleTaskView : ITaskView
                         }
 
                         TaskItem taskToStatusChange = myCollection.FindBy<int>(changeidStr, (taskItem, id) => taskItem.Id == id);
-                        var tasksToCompare = _service.GetAllTasks();
+                        var tasksToCompare = myCollection;
                         MyArray<int> prevTasks = [];
-
+                        bool hasIncompletePreviousTask = false;
+                        
                         foreach (var t in task.Previous)
                         {
                             foreach (var t2 in tasksToCompare)
@@ -350,12 +360,18 @@ public class ConsoleTaskView : ITaskView
 
                         if (changeTaskStatus == "Done")
                         {
-                            bool hasIncompletePreviousTask = false;
+                            
                             foreach (var t in prevTasks)
                             {
                                 foreach (var t2 in tasksToCompare)
                                 {
-                                    if (t2 != null && !t2.Completed) hasIncompletePreviousTask = true;
+                                    if (t == t2.Id)
+                                    {
+                                        if (t2 != null && !t2.Completed)
+                                        {
+                                            hasIncompletePreviousTask = true;
+                                        }
+                                    }
                                 }
                             }
                             if (hasIncompletePreviousTask)
@@ -367,9 +383,9 @@ public class ConsoleTaskView : ITaskView
 
                             _service.ToggleTaskCompletion(changeidStr);
                         }
-
-                        _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
                         taskToStatusChange.Status = changeTaskStatus;
+                        _service.ChangeTaskStatus(changeidStr, changeTaskStatus);
+                        
                     }
                     else
                     {
@@ -408,7 +424,7 @@ public class ConsoleTaskView : ITaskView
                 case "7":
                     string previousChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Add or Remove Previous Task")
-                        .AddChoices("Add", "Remove"));
+                        .AddChoices("Add", "Remove All"));
 
 
                     string currentTaskIdStr = Prompt("Enter task id to assign task dependency: ");
@@ -471,21 +487,26 @@ public class ConsoleTaskView : ITaskView
                             Console.ReadKey();
                             break;
                         }
+                        int[] newPrevious = new int[selectedTask.Previous.Length + 1];
 
-                        _service.ChangeTaskPrevious(currentTaskId, previousTaskId);
+                        for (int i = 0; i < selectedTask.Previous.Length; i++)
+                        {
+                            newPrevious[i] = selectedTask.Previous[i];
+                        }
+
+                        newPrevious[newPrevious.Length - 1] = previousTaskId;
+                        selectedTask.Previous = newPrevious;
 
                         Console.WriteLine("Dependency task assigned.");
                         Console.ReadKey();
                     }
                     else
                     {
-                        _service.ChangeTaskPrevious(currentTaskId, null);
-            
-
+                        selectedTask.Previous = new int[0];
+                        _service.ChangeTaskPrevious(currentTaskId, null);   
                         Console.WriteLine("Dependency task removed.");
                         Console.ReadKey();
                     }
-
                     break;
                 case "8":
                     Console.WriteLine();
