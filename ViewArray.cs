@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using Spectre.Console;
 
 interface ITaskView
@@ -188,7 +185,15 @@ public class ConsoleTaskView : ITaskView
                                 break;
                             }
                             string name = SelectUser();
-                            bool HasSameAssignee = ItemToAddAssignees.Assignees.Contains(name);
+
+                            bool HasSameAssignee = false;
+                            foreach(var assignee in ItemToAddAssignees.Assignees)
+                            {
+                                if(assignee == name)
+                                {
+                                    HasSameAssignee = true ;
+                                }
+                            }
 
                             if (!HasSameAssignee)
                             {
@@ -307,7 +312,15 @@ public class ConsoleTaskView : ITaskView
                             break;
                         }
 
-                        if (task.Assignees.Length != 0 && !task.Assignees.Contains(currentUser))
+                        bool HasSameAssignee = false;
+                        foreach(var assignee in task.Assignees)
+                        {
+                            if(currentUser == assignee)
+                            {
+                                HasSameAssignee = true ;
+                            }
+                        }
+                        if (task.Assignees.Length != 0 && !HasSameAssignee)
                         {
                             Console.WriteLine("Access denied. You are not logged in as the assigned user.");
                             Console.ReadKey();
@@ -315,7 +328,8 @@ public class ConsoleTaskView : ITaskView
                         }
 
                         TaskItem taskToStatusChange = myCollection.FindBy<int>(changeidStr, (taskItem, id) => taskItem.Id == id);
-                        var prevTasks = _service.GetAllTasks().Where(t => taskToStatusChange.Previous.Contains(t.Id)).OrderBy(t => t.Id).ToArray();
+                        
+                        var prevTasks = task.Previous.Select(prevId => _service.GetAllTasks().FirstOrDefault(t => t.Id == prevId)).ToArray();
                         bool hasIncompletePreviousTask = prevTasks.Any(t => t != null && !t.Completed);
 
                         if (changeTaskStatus == "Done")
@@ -371,6 +385,7 @@ public class ConsoleTaskView : ITaskView
                     string previousChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Add or Remove Previous Task")
                         .AddChoices("Add", "Remove"));
+
 
                     string currentTaskIdStr = Prompt("Enter task id to assign task dependency: ");
                     if (!int.TryParse(currentTaskIdStr, out int currentTaskId))

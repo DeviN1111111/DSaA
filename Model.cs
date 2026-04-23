@@ -1,5 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
-
 public class TaskItem : IComparable<TaskItem>
 {
     public int Id { get; set; }
@@ -22,5 +20,3 @@ public class TaskItem : IComparable<TaskItem>
         return $"[{Id}] {Description} - {(Completed ? "✓" : "✗")}";
     }
 }
-
-// Tot een met 4.1 Hash Map

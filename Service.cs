@@ -85,8 +85,13 @@ public class TaskService : ITaskService
         var task = _tasks.FindBy(id, (t, key) => t.Id == key);
         if (task != null && add == true) 
         {
-
-            task.Assignees = task.Assignees.Append(name).ToArray();
+            string[] newAssignees = new string[task.Assignees.Length + 1];
+            for (int i = 0; i < task.Assignees.Length; i++)
+            {
+                newAssignees[i] = task.Assignees[i];
+            }
+            newAssignees[newAssignees.Length - 1] = name;
+            task.Assignees = newAssignees;
             _repository.SaveTasks(_tasks);
         }
     }
@@ -99,7 +104,13 @@ public class TaskService : ITaskService
         {
             if (!task.Previous.Contains(previousTaskId.Value))
             {
-                task.Previous = task.Previous.Append(previousTaskId.Value).ToArray();
+                int[] newPrevious = new int[task.Previous.Length + 1];
+                for (int i = 0; i < task.Previous.Length; i++)
+                {
+                    newPrevious[i] = task.Previous[i];
+                }
+                newPrevious[newPrevious.Length - 1] = previousTaskId.Value;
+                task.Previous = newPrevious;
                 _repository.SaveTasks(_tasks);
             }
         }
