@@ -85,6 +85,8 @@ public class TaskService : ITaskService
         var task = _tasks.FindBy(id, (t, key) => t.Id == key);
         if (task != null && add == true) 
         {
+
+            task.Assignees = task.Assignees.Append(name).ToArray();
             _repository.SaveTasks(_tasks);
         }
     }

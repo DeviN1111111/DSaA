@@ -474,6 +474,8 @@ public class ConsoleTaskView : ITaskView
                     Console.ReadLine();
                     break;
                 case "9":
+                    JsonTaskRepository JsonTaskRepository = new JsonTaskRepository("tasks.json");
+                    JsonTaskRepository.SaveTasks(myCollection);
                     return;
                 default:
                     Console.WriteLine("Invalid option. Press any key to continue...");
